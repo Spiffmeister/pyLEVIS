@@ -18,8 +18,9 @@ class single_particle():
             n_ele += 2  ### TODO
             raise("Lorentzian particles are currently not implemented for reader")
         # Generate path to particle file
-        particle_file = os.path.join(LEVIS.dirdiag,"particle_data","particle."+str(index))
+        particle_file = os.path.join(LEVIS.dirdiag,"particle_data","particle."+str(index+1))
         if os.path.isfile(particle_file):
+            # If the file exists read it
             fulldata = numpy.loadtxt(particle_file)
             if numpy.size(fulldata)!=0:
                 # If data exists read in
@@ -30,11 +31,11 @@ class single_particle():
             else:
                 # Otherwise create empty particle
                 self.empty_particle()
-
         else:
             raise("Read failed: Particle "+str(index)+" does not exist.")
 
     def read_single_particle(self,fulldata,n_ele=25):
+        # The file format expected
         '''Read in particle data from particle.n data file'''
         self.t              = fulldata[0:-1:n_ele]
         self.s              = fulldata[1:-1:n_ele]
@@ -138,12 +139,12 @@ def Get_Particle(self,index=-1,parts=[]):
         # If there is no particle data abort
         raise("single particle dumping is off, aborting read.")
 
-    if (index==-1) & (parts == []):
+    if (index==-1) | (parts == []):
         # If index is -1 and no list of parts is specified read all
         np = len(os.listdir(os.path.join(self.dirdiag,"particle_data")))
         self.sp = dict.fromkeys(range(np))
         for i in self.sp:
-            self.sp[i] = single_particle(self,i+1)
+            self.sp[i] = single_particle(self,i)
     elif parts != []:
         # Read only the list of particles provided
         for i in parts:

@@ -18,7 +18,7 @@ class simulation:
         # Simulation properties
         self.simcomplete = simcomplete
         self.light_version = light_version
-        self.scenic = scenic
+        self.scenic = scenic        #SHOULD BE REMOVED AND ONLY BE PRESENT AS DICT???
         self.runid = runid
         self.equilibrium_type = "spec"
 
@@ -33,8 +33,8 @@ class simulation:
         # Get plasma properties
         # self.GetEquilibrium(self) #DecryptEquilibrium in matlab
 
-        # if scenic:
-        #     self.GetParScenic ##TODO
+        if self.scenic:
+            self.scenicdata = Get_ScenicData(self)
         
         # self.Get_BackgroundProfiles
         self.GetVolume()
@@ -49,7 +49,7 @@ class simulation:
     GetParticle = Get_Particle ##TODO: ensure particles with no data do not interrupt other routines.
     SetDir = Set_Directories
 
-    GetVolume = Get_Volume
+    GetVolume = Get_Volume #Get_PlasmaVolume
 
     # Particle collision data
     GetCollisions = Get_Particle_Collisions

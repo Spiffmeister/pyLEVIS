@@ -49,7 +49,7 @@ class initial_particle_dist():
         self.np = int(f_open.readline())
         f_open.close()
         # read in the rest
-        data = numpy.loadtxt(fname,skiprows=1)
+        data = numpy.loadtxt(fname,skiprows=1,max_rows=self.np)
         self.mass      = data[:,0]
         self.charge    = data[:,1]
         self.s         = data[:,2]

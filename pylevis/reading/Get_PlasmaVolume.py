@@ -11,7 +11,7 @@ VOLUME SUB-CLASS
 '''
 class volume():
     def __init__(self,fname,ns):
-
+        
         self.dV = numpy.loadtxt(fname,skiprows=1)
 
         s = numpy.linspace(0,1,num=ns+1,endpoint=True)
@@ -28,9 +28,11 @@ def Get_Volume(self):
     
     if os.path.exists(fname):
         with open(fname) as f_open:
+            # Read in the first line
             ns = int(f_open.readline())###TODO: more useful name
-        vol = volume(fname,ns)
-        self.vol = vol
+        # vol = volume(fname,ns)
+        # Construct the volume
+        self.vol = volume(fname,ns)
     else:
         warnings.warn('No volume data')
         self.vol = -1

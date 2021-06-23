@@ -27,8 +27,8 @@ def Get_SimulationParameters(self):
 SUPPORT
 '''
 def Get_data(self):
-    ''' READING IN DATA FILE '''
-    
+    ''' Reading in the data file '''
+    # Construct file name
     filename = os.path.join(self.dirrun,"data")
 
     # Possible keys in the parameter files
@@ -59,13 +59,16 @@ def Get_data(self):
 
 
 def Get_Lorentzian(self):
+    ''' If the file is using Lorentzian physics??? '''
     filename = os.path.join(self.dirdiag,"lorentz_orbits")
     if os.path.exists(filename):
         return {"lorentzian":True}
     else:
         return {"lorentzian":False}
 
+
 def Get_Parallel_Env(self):
+    ''' Check if LEVIS was executed in parallel '''
     filename = os.path.join(self.dirdiag,"ParaEnv")
     if os.path.exists(filename):
         with open(filename,'r') as f_open:
@@ -74,7 +77,9 @@ def Get_Parallel_Env(self):
         warnings.warn("Number of processors unknown, statistics may be incorrect.")
         return {"nprocs":1}
 
+
 def Get_Diffusivity_Params(self):
+    ''' Check diffusivity parameters '''
     filename = os.path.join(self.dirdiag,"diffusivity.parameters")
     data = dict()
     keys_data_float = ["D0es","x0","sigma_x"]

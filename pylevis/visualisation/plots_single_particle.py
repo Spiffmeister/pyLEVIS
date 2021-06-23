@@ -30,7 +30,7 @@ def plot_spconservation(self,show=1):
     ax1.ticklabel_format(axis='both',style='sci',scilimits=(0,0),useMathText=True)
 
     ax2.set_xlabel("t")
-    ax2.set_xlabel(r"$\Delta P_\phi/P_{\phi,0}$")
+    ax2.set_ylabel(r"$\Delta P_\phi/P_{\phi,0}$")
     ax2.ticklabel_format(axis='both',style='sci',scilimits=(0,0),useMathText=True)
 
     ax3.axis('equal')
