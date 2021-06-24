@@ -45,7 +45,7 @@ If VENUS-LEVIS **is not** in the same directory as `pylevis` then you can run
 ```py
     pylevis.pylevis_settings.levis_directory = "/path/to/levis"
 ```
-to update the configuration, this will automatically update all 
+to update the configuration, this will automatically update the path to VENUS-LEVIS any future calls to `pylevis.simulation`.
 
 ## Changed functions
 
