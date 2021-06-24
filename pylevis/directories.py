@@ -1,19 +1,23 @@
 # import os
 import os
+import pylevis
 
 '''
 EXTERNAL METHODS - BOUND TO LEVIS CLASS
 '''
 
 def Set_Directories(self):
-    self.mercurydir = GetMercuryDir()
+    if pylevis.pylevis_settings.levis_directory == "":
+        self.levisdir = Getlevisdir()
+    else:
+        self.levisdir = pylevis.pylevis_settings.levis_directory
 
     if "prob" in self.runid:
         tmpid = self.runid
     else:
         tmpid = "prob"+self.runid
 
-    runpath = os.path.join(self.mercurydir,"runs",tmpid)
+    runpath = os.path.join(self.levisdir,"runs",tmpid)
     self.dirrun = runpath
     self.dirdiag = os.path.join(self.dirrun,"Diag")
     
@@ -22,7 +26,14 @@ def Set_Directories(self):
 INTERNAL METHODS
 '''
 
-def GetMercuryDir():
+def Getlevisdir():
     return os.getcwd()
+
+
+'''
+
+'''
+# def set_levisdir(levis_directory):
+#     global levisdir
 
 

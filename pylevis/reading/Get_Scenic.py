@@ -7,7 +7,7 @@ import re
 
 
 def Get_ScenicData(LEVIS):
-    fname = os.path.join(LEVIS.mercurydir,"scenic.in")
+    fname = os.path.join(LEVIS.levisdir,"scenic.in")
 
     try:
         f_open = open(fname)
@@ -23,6 +23,6 @@ def Get_ScenicData(LEVIS):
         f_open.close()
 
     except:
-        raise FileNotFoundError('No scenic.in file found in {}'.format(LEVIS.mercurydir))
+        raise FileNotFoundError('No scenic.in file found in {}'.format(LEVIS.levisdir))
 
     return data

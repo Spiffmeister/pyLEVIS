@@ -130,7 +130,7 @@ class single_particle():
     BINDING TO LEVIS CLASS
 '''
 
-def Get_Particle(self,index=-1,parts=[]):
+def Get_Particle(self,parts=[]):
     '''
     Method bound to LEVIS class for reading in particles
     - SELF is LEVIS class
@@ -139,7 +139,7 @@ def Get_Particle(self,index=-1,parts=[]):
         # If there is no particle data abort
         raise("single particle dumping is off, aborting read.")
 
-    if (index==-1) | (parts == []):
+    if (parts == []):
         # If index is -1 and no list of parts is specified read all
         np = len(os.listdir(os.path.join(self.dirdiag,"particle_data")))
         self.sp = dict.fromkeys(range(np))
@@ -147,12 +147,11 @@ def Get_Particle(self,index=-1,parts=[]):
             self.sp[i] = single_particle(self,i)
     elif parts != []:
         # Read only the list of particles provided
+        parts = [x-1 for x in parts]
+        self.sp = dict.fromkeys(parts)
         for i in parts:
-            self.sp[i-1] = single_particle(self,i)
-    elif index != -1:
-        # Read only a single particle
-        self.sp[index-1] = single_particle(self,index)
-    
+            self.sp[i] = single_particle(self,i)
+
         
 
 

@@ -16,7 +16,8 @@ def plot_spconservation(self,show=1):
     ax2 = plt.subplot2grid((2,2),(1,0))
     ax3 = plt.subplot2grid((2,2),(0,1),rowspan=2)
 
-    for i in range(self.params["nparts"]):
+    parts = [key for key in self.sp.keys()]
+    for i in (parts):
         # TODO: avoid empty particles causing issues
         ax1.plot(self.sp[i].t,self.sp[i].E/self.sp[i].E[0] - 1)
 
