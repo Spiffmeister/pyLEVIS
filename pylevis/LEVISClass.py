@@ -10,6 +10,7 @@ from .reading.Get_ParticleData import BIND_Get_Particle
 from .reading.Get_PlasmaVolume import BIND_Get_Volume
 from .reading.Get_InitialParticleData import initial_particle_dist
 from .reading.Get_Collisions import Get_Particle_Collisions
+from .reading.Get_Scenic import Get_ScenicData
 '''
 BINDINGS FROM EQUILIBRIA
 '''
