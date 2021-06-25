@@ -2,6 +2,19 @@
 Get Equilibrium
 '''
 
+class equilibrium:
+    def __init__(self):
+        equilibrium.raxis    =1.
+        equilibrium.r0       =1.
+        equilibrium.a        =0.1
+        equilibrium.plasmaR  =1.1
+        equilibrium.plasmaZ  =0.1
+        
+        
+
+
+
+
 def GetEquilibrium(LEVIS):
     # equilibrium = ReconstructEquilibrium() #Unfold equilibrium from matlab
 
@@ -30,9 +43,5 @@ def GetEquilibrium(LEVIS):
             pass
     else:
         # Failing finding the profiles
-        equilibrium.raxis    =1.
-        equilibrium.r0       =1.
-        equilibrium.a        =0.1
-        equilibrium.plasmaR  =1.1
-        equilibrium.plasmaZ  =0.1
+       pass
         

@@ -18,7 +18,7 @@ def Get_SimulationParameters(self):
     # Get the number of processors used
     params.update(Get_Parallel_Env(self))
     # Get the diffusivity parameters ## TODO
-    # params["anom"] = Get_Diffusivity_Params(self) #FIX: nested dicts are bad to access
+    params["anom"] = Get_Diffusivity_Params(self) #FIX: nested dicts are bad to access
    
     return params
 

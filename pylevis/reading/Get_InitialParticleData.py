@@ -6,7 +6,7 @@ import warnings
 
 from .ext_fns import ext_rhotor, ext_v, ext_vpar, ext_vperp
 
-class initial_particle_dist():
+class initial_particle_dist:
     def __init__(self,LEVIS):
         self.Get_InitialParticle(LEVIS)
 

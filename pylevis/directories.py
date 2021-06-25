@@ -30,10 +30,5 @@ def Getlevisdir():
     return os.getcwd()
 
 
-'''
-
-'''
-# def set_levisdir(levis_directory):
-#     global levisdir
 
 

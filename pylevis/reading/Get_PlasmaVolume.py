@@ -23,7 +23,7 @@ class volume():
 BINDING TO LEVIS CLASS
 '''
 
-def Get_Volume(self):
+def BIND_Get_Volume(self):
     fname = os.path.join(self.dirdiag,"Volume")
     
     if os.path.exists(fname):

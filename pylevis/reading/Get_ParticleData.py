@@ -130,7 +130,7 @@ class single_particle():
     BINDING TO LEVIS CLASS
 '''
 
-def Get_Particle(self,parts=[]):
+def BIND_Get_Particle(self,parts=[]):
     '''
     Method bound to LEVIS class for reading in particles
     - SELF is LEVIS class

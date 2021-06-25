@@ -1,112 +1,169 @@
 '''
 '''
 import os
-from numpy import squeeze, linspace, meshgrid, cos, sin
+import numpy
 import h5py
 import warnings
 
+
+
+'''
+LEVIS
+'''
+
+class backupequilibrium:
+    def __init__(self,LEVIS):
+        fname = os.path.join(LEVIS.dirrun,"BackupEquilibrium.h5")
+        
+        if os.path.exists(fname):
+            print("Processing backup equilibrium")
+            # Read in backup eq file
+            f_data = h5py.File(fname)
+            # Get the dimensions
+            f_grid  = [int(x) for x in f_data["grid/eq_dim"]] #Grid dimensions
+            self.ns      = f_grid[0]
+            self.nth     = f_grid[1]
+            self.nph     = f_grid[2]
+        
+            # Try to interpret the equilibrium type
+            try:
+                self.eq_type = f_data["mag_type"]
+            except:
+                self.eq_type = "UNKNOWN"
+            
+            # Check if the equilibrium types match
+            if self.eq_type != LEVIS.equilibrium_type:
+                warnings.warn("Warning backup equilibrium type does not match LEVIS equilibrium type.")
+
+            # Calling readin functions
+            if self.eq_type in ["ANIMEC","VMEC","SATIRE","SPEC"]:
+                self.read_vmec(f_data)
+            elif self.eq_type == "SOLOVEV": #TODO
+                pass
+            elif self.eq_type == "MINERVA": #TODO
+                pass
+            elif self.eq_type == "DCON": #TODO
+                pass
+            elif self.eq_type == "UNKNOWN": #TODO
+                    self.read_vmec(f_data)
+                # try:
+                #     pass
+                # except:
+                #     pass
+        else:
+            # If file not found
+            raise FileNotFoundError('No backup equilibrium found.')
+        
+
+        
+               
+
+    def read_vmec(self,f_data):
+        # READ IN ANIMEC, VMEC, SATIRE AND SPEC EQUILIBRIA
+        self.read_data_halfscalar(f_data["data/half_scalar"])
+        self.read_data_fullscalar(f_data["data/full_scalar"])
+        self.read_data_halfvector(f_data["data/half_vector"])
+        self.read_data_halfflux(f_data["data/half_flux"])
+
+        self.phcorr     = 0. #What is this??
+        self.Vrad       = f_data["data/Vrad"]
+
+
+    def read_generic(self,f_data):
+        pass
+
+    '''
+        READ IN DATA
+    '''
+    def read_data_halfscalar(self,half_scalar):
+        # TODO: is this right???
+        self.B      = half_scalar[:,:,:,0]
+        self.jac    = half_scalar[:,:,:,4]
+        self.sigma  = half_scalar[:,:,:,1]
+        self.tau    = half_scalar[:,:,:,2]
+    
+    def read_data_fullscalar(self,full_scalar):
+        # full scalar
+        self.R      = full_scalar[:,:,:,0]
+        self.Z      = full_scalar[:,:,:,1]
+        self.dRds   = full_scalar[:,:,:,2]
+        self.dRdu   = full_scalar[:,:,:,3]
+        self.dZds   = full_scalar[:,:,:,4]
+        self.dZdu   = full_scalar[:,:,:,5]
+        self.lam    = full_scalar[:,:,:,6] #lambda
+        self.dlds   = full_scalar[:,:,:,7]
+        self.dldu   = full_scalar[:,:,:,8]
+        self.dldv   = full_scalar[:,:,:,9]
+    
+    def read_data_halfvector(self,half_vector):            
+        # half vector
+        self.grad_Bs= half_vector[:,:,:,0]
+        self.grad_Bu= half_vector[:,:,:,1]
+        self.grad_Bv= half_vector[:,:,:,2]
+        self.Bu     = half_vector[:,:,:,3]
+        self.Bv     = half_vector[:,:,:,4]
+        self.Hs     = half_vector[:,:,:,5]
+        self.Hu     = half_vector[:,:,:,6]
+        self.Hv     = half_vector[:,:,:,7]
+        self.Ks     = half_vector[:,:,:,8]
+        self.Ku     = half_vector[:,:,:,9]
+        self.Kv     = half_vector[:,:,:,10]
+        self.Bx     = half_vector[:,:,:,11]
+        self.By     = half_vector[:,:,:,12]
+        self.Bz     = half_vector[:,:,:,13]
+        self.Kx     = half_vector[:,:,:,14]
+        self.Ky     = half_vector[:,:,:,15]
+        self.Kz     = half_vector[:,:,:,16]
+
+    def read_data_halfflux(self,half_flux):
+        # half flux
+        self.Phip   = half_flux[:,1]
+        self.Psip   = half_flux[:,2]
+        self.Phi    = half_flux[:,3]
+        self.Psi    = half_flux[:,4]
+
+
+    '''
+        GRIDS
+    '''
+    def Get_Grid(self,f_data):
+        # Try to reconstruct
+        try:
+            # Form the grid and if it works do not generate
+            self.s              = f_data["grid/s"]
+            self.th             = f_data["grid/th"]
+            self.ph             = f_data["grid/ph"]
+            self.generate_grid  = False
+        except:
+            warnings.warn("No grid found, generating grid")
+            self.generate_grid  = True
+
+
+    def gen_grid(self):
+        # Generate the grid
+        ds2     = 0.5/float(self.ns)
+        self.s  = [0, numpy.linspace(ds2,1-ds2,num=float(self.ns)-1,endpoint=True)]
+        self.th = numpy.linspace(0,2*numpy.pi,num=self.nth+1,endpoint=True)[1:-1]
+        self.ph = numpy.linspace(0,2*numpy.pi,num=self.nth+1,endpoint=True)[1:-1]
+
+
+    def construct_grid(self):
+        # Construct grids
+        self.rhotor  = sqrt(s)
+        thg, phg, sg    = numpy.meshgrid(th,ph,s,indexing="ij")
+
+        x = R * numpy.cos(phg)
+        y = R * numpy.sin(phg)
+
+        # What is fillup??
+    
+        
 
 
 
 '''
 BINDING TO LEVIS
 '''
-def Get_Backup_Equilibrium(self):
-    fname = os.path.join(self.dirrun,"BackupEquilibrium.h5")
 
-    if os.path.exists(fname):
-
-        print("Processing backup equilibrium")
-        # Read in backup eq file
-        f_data = h5py.File('fname')
-        # Get the dimensions
-        f_grid  = [int(x) for x in f_data["grid/eq_dim"]] #Grid dimensions
-        ns      = f_grid[1]
-        nth     = f_grid[2]
-        nph     = f_grid[3]
-        # Try to interpret the equilibrium type
-        try:
-            eq_type = f_data["mag_type"]
-        except:
-            eq_type = "UNKNOWN"
-        # Try to reconstruct
-        try:
-            # Form the grid and if it works do not generate
-            s   = f_data["grid/s"]
-            th  = f_data["grid/th"]
-            ph  = f_data["grid/ph"]
-            generate_grid = False
-        except:
-            warnings.warn("No grid found, generating grid")
-            generate_grid = True
-        
-        # Generate the equilibrium data
-        if eq_type in ["ANIMEC","VMEC","SATIRE","SPEC"]:
-            # Read in the things we need
-            tmpread     = f_data["data/half_scalar"]
-            # TODO: is this right???
-            B       = tmpread[:,:,:,0]
-            jac     = tmpread[:,:,:,4]
-            sigma   = tmpread[:,:,:,1]
-            tau     = tmpread[:,:,:,2]
-            # full scalar
-            tmpread     = f_data["data/full_scalar"]
-            R       = tmpread[:,:,:,0]
-            Z       = tmpread[:,:,:,1]
-            dRds    = tmpread[:,:,:,2]
-            dRdu    = tmpread[:,:,:,3]
-            dZds    = tmpread[:,:,:,4]
-            dZdu    = tmpread[:,:,:,5]
-            lam     = tmpread[:,:,:,6] #lambda
-            dlds    = tmpread[:,:,:,7]
-            dldu    = tmpread[:,:,:,8]
-            dldv    = tmpread[:,:,:,9]
-            # half vector
-            tmpread     = f_data["data/half_vector"]
-            grad_Bs = tmpread[:,:,:,0]
-            grad_Bu = tmpread[:,:,:,1]
-            grad_Bv = tmpread[:,:,:,2]
-            Bu      = tmpread[:,:,:,3]
-            Bv      = tmpread[:,:,:,4]
-            Hs      = tmpread[:,:,:,5]
-            Hu      = tmpread[:,:,:,6]
-            Hv      = tmpread[:,:,:,7]
-            Ks      = tmpread[:,:,:,8]
-            Ku      = tmpread[:,:,:,9]
-            Kv      = tmpread[:,:,:,10]
-            Bx      = tmpread[:,:,:,11]
-            By      = tmpread[:,:,:,12]
-            Bz      = tmpread[:,:,:,13]
-            Kx      = tmpread[:,:,:,14]
-            Ky      = tmpread[:,:,:,15]
-            Kz      = tmpread[:,:,:,16]
-            # half flux
-            tmpread     = f_data["data/half_flux"]
-            Phip    = tmpread[:,1]
-            Psip    = tmpread[:,2]
-            Phi     = tmpread[:,3]
-            Psi     = tmpread[:,4]
-            
-            phcorr  = 0. #What is this??
-
-            Vrad        = f_data["data/Vrad"]
-
-            if generate_grid:
-                ds2     = 0.5/float(ns)
-                s       = [0, linspace(ds2,1-ds2,num=float(ns)-1,endpoint=True)]
-                th      = linspace(0,2*pi,num=nth+1,endpoint=True)[1:-1]
-                ph      = linspace(0,2*pi,num=nth+1,endpoint=True)[1:-1]
-
-    else:
-        # If file not found
-        raise FileNotFoundError('No backup equilibrium found.')
-    
-    # Construct grids
-    rhotor  = sqrt(s)    
-    thg, phg, sg    = meshgrid(th,ph,s,indexing="ij")
-
-    x = R * cos(phg)
-    y = R * sin(phg)
-
-    # What is fillup??
-
+def BIND_Get_Backup_Equilibrium(self):
+    return backupequilibrium(self)

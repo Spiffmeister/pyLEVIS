@@ -6,10 +6,14 @@ from .directories import Set_Directories
 BINDINGS FROM READING
 '''
 from .reading.Get_InitialParams import Get_SimulationParameters
-from .reading.Get_ParticleData import Get_Particle
-from .reading.Get_PlasmaVolume import Get_Volume
-from .reading.Get_InitialData import initial_particle_dist
+from .reading.Get_ParticleData import BIND_Get_Particle
+from .reading.Get_PlasmaVolume import BIND_Get_Volume
+from .reading.Get_InitialParticleData import initial_particle_dist
 from .reading.Get_Collisions import Get_Particle_Collisions
+'''
+BINDINGS FROM EQUILIBRIA
+'''
+from .equilibria.Get_BackupEquilibrium import BIND_Get_Backup_Equilibrium
 
 from .visualisation import plots_single_particle
 
@@ -31,12 +35,12 @@ class simulation:
         self.init = initial_particle_dist(self)
 
         # Get plasma properties
-        # self.GetEquilibrium(self) #DecryptEquilibrium in matlab
+        # self.magnetic = backupequilibrium(self) #DecryptEquilibrium in matlab
 
         if self.scenic:
             self.scenicdata = Get_ScenicData(self)
         
-        # self.Get_BackgroundProfiles
+        # self.GetBackgroundProfiles
         self.GetVolume()
 
         # self.GetLostParticles
@@ -46,14 +50,16 @@ class simulation:
     
 
     ''' --- EXTERNAL BINDINGS --- '''
-    GetParticle = Get_Particle ##TODO: ensure particles with no data do not interrupt other routines.
+    GetParticle = BIND_Get_Particle ##TODO: ensure particles with no data do not interrupt other routines.
     SetDir = Set_Directories
 
-    GetVolume = Get_Volume #Get_PlasmaVolume
+    GetVolume = BIND_Get_Volume #Get_PlasmaVolume
 
     # Particle collision data
     GetCollisions = Get_Particle_Collisions
 
+    def GetBackupEquilibrium(self):
+        self.magnetic = BIND_Get_Backup_Equilibrium(self)
 
 
     '''
