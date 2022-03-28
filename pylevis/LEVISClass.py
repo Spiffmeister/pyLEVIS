@@ -19,13 +19,16 @@ from .equilibria.Get_BackupEquilibrium import BIND_Get_Backup_Equilibrium
 from .visualisation import plots_single_particle
 
 class simulation:
+    '''
+    Class for loading completed VENUS-LEVIS simulations
+    '''
     def __init__(self,runid,light_version=False,simcomplete=True,scenic=False):
         # Simulation properties
         self.simcomplete = simcomplete
         self.light_version = light_version
         self.scenic = scenic        #SHOULD BE REMOVED AND ONLY BE PRESENT AS DICT???
         self.runid = runid
-        self.equilibrium_type = "spec"
+        self.equilibrium_type = "spec" #TODO rewrite for auto-detection
 
         ''' Functions '''
         # Set directories

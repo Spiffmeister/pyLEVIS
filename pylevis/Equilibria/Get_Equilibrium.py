@@ -12,9 +12,6 @@ class equilibrium:
         
         
 
-
-
-
 def GetEquilibrium(LEVIS):
     # equilibrium = ReconstructEquilibrium() #Unfold equilibrium from matlab
 

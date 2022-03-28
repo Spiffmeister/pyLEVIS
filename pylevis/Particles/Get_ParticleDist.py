@@ -10,17 +10,16 @@ from .ext_fns import ext_rhotor, ext_v, ext_vpar, ext_vperp
 
 
 class particle_dist():
+    '''
+    Reading in data files - should work for both init and final distributions 
+    TODO: TEST ON FINAL
+    '''
     def __init__(self,LEVIS):
         if "dat" in fname:
             self.Read_Particle_dat(fname)
         elif "h5" in fname:
             self.Read_Particle_h5(fname)
-    
 
-    '''
-    Reading in data files - should work for both init and final distributions 
-    TODO: TEST ON FINAL
-    '''
     def Read_Particle_dat(self,equilibrium_type,fname):
         # single.particle.dat reading for initial data
         # also handles the InitDist file
