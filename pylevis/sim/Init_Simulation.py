@@ -55,7 +55,7 @@ class new_simulation:
 
 
     ### BINDING TO EXTERNAL FUNCTIONS ###
-    def generate_particles(self,R,pol,tor,vpar,E,M,C,weight,volmax=1000):
+    def generate_particles(self,R,pol,tor,vpar,E,M,C,weight,volmax=1):
         self.particles = create_particle_distribution(self.nparts,R,pol,tor,vpar,E,M,C,weight,volmax=volmax)
     
 

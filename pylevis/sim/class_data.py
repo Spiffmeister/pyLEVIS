@@ -22,30 +22,32 @@ class data():
     def default_dicts(self):
         headers = ['simulation','collisions','equilibrium','diagnostics','postprocessing']
         simulation     = {"simulation_duration":int(42069),\
-            "tfin":float(1.0e-2),\
+            "tfin":float(1.0e-5),\
             "nparts":int(4),\
             "ninjection":int(1),\
             "fixed_timestep":float(-1),\
             "generate_distribution":bool(0),\
             "cartesian_surface":bool(0)}
-        collisions     = {"coulomb":bool(0),\
+        collisions     = {"orbit":bool(1),\
+            "variation_threshold":[float(0.0),float(0.0)],\
+            "coulomb":bool(0),\
             "cx":bool(0),\
             "fusion":bool(0),\
-            "icrh":bool(0),\
             "nturns":bool(0),\
-            "orbit":bool(1),\
-            "anomalous":bool(0),\
-            "alpha":bool(0),\
-            "variation_threshold":[float(0.0),float(0.0)],\
-            "Ethreshold":float(2.0),}
+            "icrh":bool(0),\
+            "rotation":bool(0),\
+            "nbi":bool(0),\
+            "alphas":bool(0),\
+            "Ethreshold":float(2.0),\
+            "anomalous":bool(0)}
         equilibrium    = {"animec":bool(1),\
             "backup_equilibrium":bool(0),\
             "recover_equilibrium":bool(0),
             "force_axisymmetry":bool(0),\
             "externalfield":bool(0)}
-        diagnostics    = {"ndiagnostics":bool(2),\
-            "dump_particle":bool(2),\
-            "dump_fields":bool(0),\
+        diagnostics    = {"ndiagnostics":int(2),\
+            "dump_fields":int(5),\
+            "dump_particles":int(2),\
             "bounce_tip_recording":bool(0)}
         postprocessing = {"dump_fullf":bool(1),\
             "dump_neutron_camera":bool(1)}
@@ -80,43 +82,47 @@ class data():
         # for key, val in self.simulation.__dict__.items():
         for key,val in self.simulation.items():
             if type(val) != bool:
-                f.write(key+" = "+str(val)+"\n")
+                f.write(key+"="+str(val)+"\n")
             else:
-                f.write(key+" = "+str(int(val))+"\n")
+                f.write(key+"="+str(int(val))+"\n")
         f.write("/\n")
         
         f.write("&collisions\n")
         for key, val in self.collisions.items():
             if type(val) != list:
-                f.write(key+" = "+str(val)+"\n")
-            elif type(val) == bool:
-                f.write(key+" = "+str(int(val))+"\n")
+                if type(val) != bool:
+                    f.write(key+"="+str(val)+"\n")
+                else:
+                    f.write(key+"="+str(int(val))+"\n")
             else:
-                f.write(key+" = "+str(val[0])+","+str(val[1])+"\n")
+                f.write(key+"="+str(val[0])+","+str(val[1])+"\n")
         f.write("/\n")
 
         f.write("&equilibrium\n")
         for key, val in self.equilibrium.items():
             if type(val) != bool:
-                f.write(key+" = "+str(val)+"\n")
+                f.write(key+"="+str(val)+"\n")
             else:
-                f.write(key+" = "+str(int(val))+"\n")
-        f.write("/")
+                f.write(key+"="+str(int(val))+"\n")
+        f.write("/\n")
 
         f.write("&diagnostics\n")
         for key, val in self.diagnostics.items():
             if type(val) != bool:
-                f.write(key+" = "+str(val)+"\n")
+                f.write(key+"="+str(val)+"\n")
             else:
-                f.write(key+" = "+str(int(val))+"\n")
+                if val:
+                    f.write(key+"=.TRUE.\n")
+                else:
+                    f.write(key+"=.FALSE.\n")
         f.write("/\n")
 
         f.write("&postprocessing\n")
         for key, val in self.postprocessing.items():
             if type(val) != bool:
-                f.write(key+" = "+str(val)+"\n")
+                f.write(key+"="+str(val)+"\n")
             else:
-                f.write(key+" = "+str(int(val))+"\n")
+                f.write(key+"="+str(int(val))+"\n")
         f.write("/\n")
         f.close()
         print("Data file written")

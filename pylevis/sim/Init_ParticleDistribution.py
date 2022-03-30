@@ -37,7 +37,7 @@ def write_distribution(fpath,dist,filetype='dat'):
         filetype = 'dat'
         warnings.warn('Type not recognised, outputting .dat file.')
     # Write files
-    fname = os.path.join(fpath,'single.part.'+filetype)
+    fname = os.path.join(fpath,'single.particle.'+filetype)
     if filetype == 'h5':
         create_particle_h5(fname,npart,dist)
     else:
@@ -49,7 +49,7 @@ def write_distribution(fpath,dist,filetype='dat'):
 INTERNAL FUNCTIONS
 '''
 # PARTICLE CREATION
-def createpart(R,pol,tor,vpar,E,Mrat,Crat,weight,volmax=0):
+def createpart(R,pol,tor,vpar,E,Mrat,Crat,weight,volmax=1):
     '''
     Create a single particle
     '''
@@ -83,6 +83,7 @@ def createpart(R,pol,tor,vpar,E,Mrat,Crat,weight,volmax=0):
     
     # mass ratio to proton | charge ratio to proton | radial position | poloidal angle | toroidal angle | v_parallel/v | energy [eV] | statistical weight | lvol
     if volmax > 0:
+        print(lvol)
         return numpy.array([M,C,s,pol,tor,vpar,E,weight,lvol])
     else:
         return numpy.array([M,C,s,pol,tor,vpar,E,weight])
