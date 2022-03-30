@@ -8,30 +8,37 @@ import os
 
 
 
-def create_particle_distribution(npart,R,pol,tor,vpar,E,M,C,weight,volmax=1000):
+def create_particle_distribution(npart,R,pol,tor,vpar,E,M,C,weight,volmax=1):
     '''
     Create a distribution of n particles
     R, E, vpar and vol are lists of [Rmin,Rmax] for example
     '''
     npartchk(npart)
-    parts = numpy.zeros([npart, 9])
+    if volmax == 0:
+        parts = numpy.zeros([npart, 8])
+    else:
+        parts = numpy.zeros([npart, 9])
     for i in range(npart):
-        parts[i,:] = createpart(R,pol,tor,vpar,E,M,C,weight,volmax=volmax)
+        part = createpart(R,pol,tor,vpar,E,M,C,weight,volmax=volmax)
+        print(part)
+        parts[i,:] = part
     
     return parts
 
 
-def write_distribution(loc,dist,type='dat'):
+def write_distribution(fpath,dist,filetype='dat'):
     '''
     Writes the distribution file to the location given
     '''
-    npart = dist.numpy.shape[0]
-    if type not in ['dat','h5']:
-        type = 'dat'
+    print(fpath)
+    print(dist)
+    npart = dist.shape[0]
+    if filetype not in ['dat','h5']:
+        filetype = 'dat'
         warnings.warn('Type not recognised, outputting .dat file.')
     # Write files
-    fname = os.path.join(loc,'single.part.'+type)
-    if type == 'h5':
+    fname = os.path.join(fpath,'single.part.'+filetype)
+    if filetype == 'h5':
         create_particle_h5(fname,npart,dist)
     else:
         create_particle_dat(fname,npart,dist)
@@ -47,7 +54,10 @@ def createpart(R,pol,tor,vpar,E,Mrat,Crat,weight,volmax=0):
     Create a single particle
     '''
     # radial position
-    r = numpy.random.uniform(low=R[0],high=R[1]*volmax)
+    if type(R) != int:
+        r = numpy.random.uniform(low=R[0],high=R[1]*volmax)
+    else:
+        r = R
     s = r%2 #Ensure the particle is within the computational volume
     # L_vol -- for SPEC equilibria
     if volmax > 0:
@@ -55,13 +65,21 @@ def createpart(R,pol,tor,vpar,E,Mrat,Crat,weight,volmax=0):
             if r/(i+1)<2:
                 lvol = i+1
     # v_parallel/v
-    pol = numpy.random.uniform(low=pol[0],high=pol[1])
-    tor = numpy.random.uniform(low=tor[0],high=tor[1])
-    vpar = numpy.random.uniform(low=vpar[0],high=vpar[1])
+    if type(pol) != int:
+        pol = numpy.random.uniform(low=pol[0],high=pol[1])
+    if type(tor) != int:
+        tor = numpy.random.uniform(low=tor[0],high=tor[1])
+    if type(vpar) != int:
+        vpar = numpy.random.uniform(low=vpar[0],high=vpar[1])
     # Energy (eV)
-    E = numpy.random.uniform(low=E[0],high=E[1])
-    M = numpy.random.uniform(low=Mrat[0],high=Mrat[1])
-    C = numpy.random.uniform(low=Crat[0],high=Crat[1])
+    if type(E) != int:
+        E = numpy.random.uniform(low=E[0],high=E[1])
+    if type(Mrat) != int:
+        M = numpy.random.uniform(low=Mrat[0],high=Mrat[1])
+    if type(Crat) != int:
+        C = numpy.random.uniform(low=Crat[0],high=Crat[1])
+    if type(weight) != int:
+        weight = numpy.random.uniform(low=weight[0],high=weight[1])
     
     # mass ratio to proton | charge ratio to proton | radial position | poloidal angle | toroidal angle | v_parallel/v | energy [eV] | statistical weight | lvol
     if volmax > 0:
@@ -72,7 +90,7 @@ def createpart(R,pol,tor,vpar,E,Mrat,Crat,weight,volmax=0):
 
 
 # CHECK NPARTS VS NCPUS
-def npartchk(npart,machine):
+def npartchk(npart,machine='local'):
     '''
     Helper function for checking how many cpus can be called (or should be)
     '''
@@ -107,12 +125,15 @@ def create_particle_h5(fname,npart,parts,eqtype='spec'):
         dset = hf.create_dataset('lvol', data=parts[:,8])
     hf.close()
 
-def create_particle_dat(fname,npart,parts):
+def create_particle_dat(fname,npart,parts,eqtype='spec'):
     '''
     Create a .dat file for particle distribution, serial read by LEVIS only
     '''
     # Write the distribution
-    format = "%f    %f  %f  %f  %f  %f  %f  %f  %i"
+    if eqtype == 'spec':
+        format = "%f    %f  %f  %f  %f  %f  %f  %f  %i"
+    else:
+        format = "%f    %f  %f  %f  %f  %f  %f  %f"
     numpy.savetxt(fname,parts,fmt=format)
     # Append the number of particles to the start of the file
     with open(fname,'r') as read_f, open(fname+"bak",'w') as write_f:

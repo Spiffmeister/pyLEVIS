@@ -20,7 +20,12 @@ from .visualisation import plots_single_particle
 
 class simulation:
     '''
-    Class for loading completed VENUS-LEVIS simulations
+    Class for loading completed VENUS-LEVIS simulations. Inputs:
+    - runid = "name of run"
+    Optional Inputs:
+    - light_version
+    - simcomplete
+    - scenic
     '''
     def __init__(self,runid,light_version=False,simcomplete=True,scenic=False):
         # Simulation properties

@@ -6,8 +6,9 @@ import os
 import shutil
 import warnings
 import pylevis
-from pylevis.Equilibria.Get_BackupEquilibrium import backupequilibrium
-from Init_ParticleDistribution import create_particle_distribution, write_distribution, npartchk
+from ..directories import Set_Directories
+from .class_data import data
+from .Init_ParticleDistribution import create_particle_distribution, write_distribution, npartchk
 
 
 class new_simulation:
@@ -29,7 +30,9 @@ class new_simulation:
     def __init__(self,simname,nparts,eqfile,eqtype="spec",machine='local'):
         if "prob" not in simname:
             simname = "prob"+simname
+
         self.simname = simname
+        self.levdir = pylevis.pylevis_settings.levis_directory
         self.simdir = os.path.join(self.levdir,"runs",self.simname)
         self.equilibrium_type = "spec"
         self.eqfile = eqfile
@@ -39,12 +42,13 @@ class new_simulation:
         self.nparts = nparts
         self.ncpus = 1
 
-        self.data = pylevis.data()
+        self.data = data()
         self.data.simulation['nparts'] = self.nparts
         print("Default simulation config loaded, nparts set, check simulation.data.properties() to see settings")
 
 
         self.created = False
+        self.machine = machine
         self.avail_machines = ['local']
         print("Config for new simulation created")
         print("Use simulation.create_simulation() to generate files")
@@ -52,15 +56,15 @@ class new_simulation:
 
     ### BINDING TO EXTERNAL FUNCTIONS ###
     def generate_particles(self,R,pol,tor,vpar,E,M,C,weight,volmax=1000):
-        self.particles = create_particle_distribution(self.npart,R,pol,tor,vpar,E,M,C,weight,volmax=volmax)
+        self.particles = create_particle_distribution(self.nparts,R,pol,tor,vpar,E,M,C,weight,volmax=volmax)
     
 
-    machine_npartchk = npartchk
-    write_particles = write_distribution
+    # machine_npartchk = npartchk
+    # write_particles = write_distribution
 
 
 
-    def create_simulation(self,filetype='dat',overwrite=False):
+    def create_simulation(self,ftype='dat',overwrite=False):
         '''
         Creates files required to run simulation. Optional inputs:
         filetype = 'dat' or 'h5' - particle file
@@ -69,8 +73,9 @@ class new_simulation:
         # Create directory for simulation
         if not os.path.exists(self.simdir):
             os.mkdir(self.simdir)
-        elif os.path.exists(self.simdir) and not overwrite:
-            os.rmdir(self.simdir)
+        elif os.path.exists(self.simdir) and overwrite:
+            shutil.rmtree(self.simdir)
+            os.mkdir(self.simdir)
         else:
             raise Exception('Path already exists use overwrite flag')
 
@@ -85,18 +90,17 @@ class new_simulation:
         shutil.copy2(os.path.join(bindir,"postprocessing.x"),self.simdir)
 
         # Create data file
-        self.data.create(self.simname)
+        self.data.write(self.simdir)
         # Create particle distribution file
         try:
-            if (self.nparts > 1000) & ('dat' in filetype):
+            if (self.nparts > 1000) & ('dat' in ftype):
                 warnings.warn('Large number of particles, recommend creating h5 file for parallel reading')
-            self.write_particles(self.simdir,self.particles,filetype)
+            write_distribution(self.simdir,self.particles)
             self.created = True
             # raise Exception("In-built LEVIS generator not finished yet")
         except NameError:
             raise Exception("Particles have not been generated, call new_simulation.generate_particles()")
-        else:
-            raise Exception("Something went wrong")
+        print('Simulation data written')
 
 
 
@@ -109,6 +113,8 @@ class new_simulation:
             raise Exception('Simulation files not yet created, run simulation.create_simulation() first')
         if self.machine == "local":
             #execute ./mercury.x < data and echo output
+            os.chdir(self.simdir)
+            os.system('./mercury.x < data')
             pass
 
 

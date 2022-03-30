@@ -1,5 +1,7 @@
 from .LEVISClass import simulation
 
+from .sim.Init_Simulation import new_simulation
+
 from . import visualisation as vis
 
 # from .auxil.Init_ParticleDistribution import 

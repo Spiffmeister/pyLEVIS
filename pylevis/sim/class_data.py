@@ -14,29 +14,30 @@ class data():
     Internal methods:
     default_dicts(), write(), read(), fill_data()
     """
-    def __init__(self):
+    def __init__(self,npart=4):
         self.simulation, self.collisions, self.equilibrium, self.diagnostics, self.postprocessing = self.default_dicts()
-        
+
+        self.simulation["nparts"] = npart
 
     def default_dicts(self):
         headers = ['simulation','collisions','equilibrium','diagnostics','postprocessing']
-        simulation     = {"simulation_duration":float(1),\
+        simulation     = {"simulation_duration":int(42069),\
             "tfin":float(1.0e-2),\
-            "npart":int(4),\
+            "nparts":int(4),\
             "ninjection":int(1),\
             "fixed_timestep":float(-1),\
-            "generate_timestep":bool(0),\
+            "generate_distribution":bool(0),\
             "cartesian_surface":bool(0)}
-        collisions     = {"orbit":bool(1),\
-            "variation_threshold":[float(0.0),float(0.0)],\
-            "coulomb":bool(0),\
+        collisions     = {"coulomb":bool(0),\
             "cx":bool(0),\
             "fusion":bool(0),\
-            "nturns":bool(0),\
             "icrh":bool(0),\
+            "nturns":bool(0),\
+            "orbit":bool(1),\
+            "anomalous":bool(0),\
             "alpha":bool(0),\
-            "Ethreshold":float(2.0),\
-            "anomalous":bool(0)}
+            "variation_threshold":[float(0.0),float(0.0)],\
+            "Ethreshold":float(2.0),}
         equilibrium    = {"animec":bool(1),\
             "backup_equilibrium":bool(0),\
             "recover_equilibrium":bool(0),
@@ -64,45 +65,59 @@ class data():
     def properties(self):
         for key in list(self.__dict__.keys()):
             print(key)
-            for subkey in getattr(self,key).__dict__.items():
+            for subkey in getattr(self,key).items():
                 print(subkey)
     
-    def write(self,fname):
+    def write(self,simpath):
         '''
         Writes a data file
         '''
         tmp_sim, tmp_col, tmp_equ, tmp_diag, tmp_post = self.default_dicts()
 
-        fname = os.path.join(fname+"data")
-        f = open("data",'w')
-        f.write("&simulation")
+        fname = os.path.join(simpath,"data")
+        f = open(fname,'w')
+        f.write("&simulation\n")
         # for key, val in self.simulation.__dict__.items():
         for key,val in self.simulation.items():
-            f.write(key+" = "+str(val))
-        f.write("/")
+            if type(val) != bool:
+                f.write(key+" = "+str(val)+"\n")
+            else:
+                f.write(key+" = "+str(int(val))+"\n")
+        f.write("/\n")
         
-        f.write("&collisions")
+        f.write("&collisions\n")
         for key, val in self.collisions.items():
             if type(val) != list:
-                f.write(key+" = "+str(val))
+                f.write(key+" = "+str(val)+"\n")
+            elif type(val) == bool:
+                f.write(key+" = "+str(int(val))+"\n")
             else:
-                f.write(key+" = "+str(val[0])+","+str(val[1]))
-        f.write("/")
+                f.write(key+" = "+str(val[0])+","+str(val[1])+"\n")
+        f.write("/\n")
 
-        f.write("&equilibrium")
+        f.write("&equilibrium\n")
         for key, val in self.equilibrium.items():
-            f.write(key+" = "+str(val))
+            if type(val) != bool:
+                f.write(key+" = "+str(val)+"\n")
+            else:
+                f.write(key+" = "+str(int(val))+"\n")
         f.write("/")
 
-        f.write("&diagnostics")
+        f.write("&diagnostics\n")
         for key, val in self.diagnostics.items():
-            f.write(key+" = "+str(val))
-        f.write("/")
+            if type(val) != bool:
+                f.write(key+" = "+str(val)+"\n")
+            else:
+                f.write(key+" = "+str(int(val))+"\n")
+        f.write("/\n")
 
-        f.write("&postprocessing")
+        f.write("&postprocessing\n")
         for key, val in self.postprocessing.items():
-            f.write(key+" = "+str(val))
-        f.write("/")
+            if type(val) != bool:
+                f.write(key+" = "+str(val)+"\n")
+            else:
+                f.write(key+" = "+str(int(val))+"\n")
+        f.write("/\n")
         f.close()
         print("Data file written")
     
