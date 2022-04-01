@@ -56,6 +56,9 @@ class new_simulation:
 
     ### BINDING TO EXTERNAL FUNCTIONS ###
     def generate_particles(self,R,pol,tor,vpar,E,M,C,weight,volmax=1):
+        '''
+        radial position, poloidal angle, toroidal angle, v_parallel/v, energy [eV], mass ratio to proton, charge ratio to proton, statistical weight, number of volumes in equilibrium (spec only)
+        '''
         self.particles = create_particle_distribution(self.nparts,R,pol,tor,vpar,E,M,C,weight,volmax=volmax)
     
 
@@ -89,8 +92,18 @@ class new_simulation:
         shutil.copy2(os.path.join(bindir,"mercury.x"),self.simdir)
         shutil.copy2(os.path.join(bindir,"postprocessing.x"),self.simdir)
 
+        # Check to make sure nparts is the same across configs
+        if self.particles.shape[0] != self.nparts:
+            warnings.warn('Number of particles not the same as nparts, updating nparts to match number of generated particles')
+            self.nparts = self.particles.shape[0]
+        
+        if self.data.simulation["nparts"] != self.nparts:
+            warnings.warn('Number of particles in config not the same as number generated, updating config')
+            self.data.simulation["nparts"] = self.nparts
+
         # Create data file
         self.data.write(self.simdir)
+
         # Create particle distribution file
         try:
             if (self.nparts > 1000) & ('dat' in ftype):
