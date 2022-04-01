@@ -34,7 +34,7 @@ class new_simulation:
         self.simname = simname
         self.levdir = pylevis.pylevis_settings.levis_directory
         self.simdir = os.path.join(self.levdir,"runs",self.simname)
-        self.equilibrium_type = "spec"
+        self.equilibrium_type = eqtype
         self.eqfile = eqfile
 
         self.levdir = pylevis.pylevis_settings.levis_directory
@@ -64,6 +64,21 @@ class new_simulation:
 
     # machine_npartchk = npartchk
     # write_particles = write_distribution
+
+    def machineconfiguration(self):
+        if self.machine == 'gadi':
+            self.machine_config = {"ncpus":1,\
+            "ngpus":0,\
+            "mem":"4GB",\
+            "jobfs":"4GB",\
+            "queue":"normal",\
+            "project":"y08",\
+            "walltime":"02:00:00",\
+            "storage":"gdata/y08+scratch/y08",\
+            "enter_job_directory":"wd",\
+            "email":"",
+            "alerts":"bea",\
+            "jobname":"LEVIS"}
 
 
 
@@ -140,3 +155,33 @@ def copy_simulation(LEVIS):
     runname = LEVIS.rundir+".copy"
     tmpsim = new_simulation(runname,LEVIS.params["nparts"],eqtype=LEVIS.equilibrium_type)
     return tmpsim
+
+
+
+
+def create_machine(machine):
+    if machine == "gadi":
+        config = {"ncpus":1,\
+            "mem":"4GB",\
+            "jobfs":"4GB",\
+            "queue":"normal",\
+            "project":"y08",\
+            "walltime":"02:00:00",\
+            "storage":"gdata/y08+scratch/y08",\
+            "enter_job_directory":"wd",\
+            "email":"",
+            "alerts":"bea",\
+            "jobname":"LEVIS"}
+    return config
+
+
+def write_machine(SIM):
+    if SIM.machine == "gadi":
+        flags = {"-l":["ncpus","mem","jobfs","walltime","enter_job_directory"],"-q":["normal"],"-P":["project"],"-m":["alerts"],"-M":["email"]}
+        f_open = open(new_simulation.simdir,'w')
+        f_open.write("#!/bin/bash")
+        for key,val in SIM.machine_config:
+            for subkey,subval in flags:
+                if val in subval:
+                    f_open.write("#PBS "+subkey+" "+key+" "+val)
+
