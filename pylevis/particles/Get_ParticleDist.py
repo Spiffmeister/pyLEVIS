@@ -11,10 +11,10 @@ from .ext_fns import ext_rhotor, ext_v, ext_vpar, ext_vperp
 
 class particle_dist():
     '''
-    Reading in data files - should work for both init and final distributions 
+    Reading in initial distribution
     TODO: TEST ON FINAL
     '''
-    def __init__(self,LEVIS):
+    def __init__(self,fname):
         if "dat" in fname:
             self.Read_Particle_dat(fname)
         elif "h5" in fname:
@@ -59,6 +59,8 @@ class particle_dist():
         self.charge = numpy.array(f_open["charge"])
         self.R = numpy.array(f_open["R"])
         self.Z = numpy.array(f_open["Z"])
+        if equilibrium_type == "spec":
+            self.lvol = numpy.array(f_open["lvol"])
         # NBI distribution
         try:
             self.vx = numpy.array(f_open["vx"])

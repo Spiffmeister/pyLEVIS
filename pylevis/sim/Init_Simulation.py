@@ -6,6 +6,7 @@ import os
 import shutil
 import warnings
 import pylevis
+import subprocess
 from ..directories import Set_Directories
 from .class_data import data
 from .Init_ParticleDistribution import create_particle_distribution, write_distribution, npartchk
@@ -55,11 +56,15 @@ class new_simulation:
 
 
     ### BINDING TO EXTERNAL FUNCTIONS ###
-    def generate_particles(self,R,pol,tor,vpar,E,M,C,weight,volmax=1):
+    def generate_particles(self,R,pol,tor,vpar,E,M=1,C=1,weight=1,volmax=1):
         '''
         radial position, poloidal angle, toroidal angle, v_parallel/v, energy [eV], mass ratio to proton, charge ratio to proton, statistical weight, number of volumes in equilibrium (spec only)
         '''
-        self.particles = create_particle_distribution(self.nparts,R,pol,tor,vpar,E,M,C,weight,volmax=volmax)
+        self.particles = create_particle_distribution(self.nparts,R,pol,tor,vpar,E,M=M,C=C,weight=weight,volmax=volmax)
+        avs = numpy.mean(self.particles[:,2])
+        avp = numpy.mean(self.particles[:,3])
+        avt = numpy.mean(self.particles[:,4])
+        print("Particle distribution generated. Average [s,theta,zeta] position: [%3.5f,%3.5f,%3.5f]"%(avs,avp,avt))
     
 
     # machine_npartchk = npartchk
@@ -98,6 +103,8 @@ class new_simulation:
             raise Exception('Path already exists use overwrite flag')
 
         # Grab equilibrium file
+        if not os.path.exists(self.eqfile):
+            raise
         simeq = os.path.join(self.simdir,"eq.spec.h5")
         shutil.copy2(self.eqfile,simeq)
 
@@ -136,14 +143,15 @@ class new_simulation:
     # def create_readme(self):
         # pass
 
-    def run_simulation(self):
+    def run_simulation(self,mode="active"):
         if not self.created:
             raise Exception('Simulation files not yet created, run simulation.create_simulation() first')
         if self.machine == "local":
             #execute ./mercury.x < data and echo output
             os.chdir(self.simdir)
-            os.system('./mercury.x < data')
-            pass
+            subprocess.run("./mercury.x < data",shell=True)
+            # print("Running simulation")
+            
 
 
 

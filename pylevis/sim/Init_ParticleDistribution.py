@@ -8,19 +8,19 @@ import os
 
 
 
-def create_particle_distribution(npart,R,pol,tor,vpar,E,M,C,weight,volmax=1):
+def create_particle_distribution(npart,R,pol,tor,vpar,E,M=1,C=1,weight=1,volmax=1):
     '''
     Create a distribution of n particles
     R, E, vpar and vol are lists of [Rmin,Rmax] for example
+    Optional arguments: M, C, weight, volmax
     '''
     npartchk(npart)
     if volmax == 0:
         parts = numpy.zeros([npart, 8])
     else:
         parts = numpy.zeros([npart, 9])
-    for i in range(npart):
+    for i in range(npart): #This loop is unnecessary
         part = createpart(R,pol,tor,vpar,E,M,C,weight,volmax=volmax)
-        print(part)
         parts[i,:] = part
     
     return parts
@@ -76,8 +76,12 @@ def createpart(R,pol,tor,vpar,E,Mrat,Crat,weight,volmax=1):
         E = numpy.random.uniform(low=E[0],high=E[1])
     if type(Mrat) != int:
         M = numpy.random.uniform(low=Mrat[0],high=Mrat[1])
+    else:
+        M = Mrat
     if type(Crat) != int:
         C = numpy.random.uniform(low=Crat[0],high=Crat[1])
+    else:
+        C = Crat
     if type(weight) != int:
         weight = numpy.random.uniform(low=weight[0],high=weight[1])
     
