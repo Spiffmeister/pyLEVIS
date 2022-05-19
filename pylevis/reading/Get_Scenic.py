@@ -6,8 +6,19 @@ import os
 import re
 
 
-def Get_ScenicData(LEVIS):
-    fname = os.path.join(LEVIS.levisdir,"scenic.in")
+def Get_ScenicData(simulation):
+    """
+    Get_ScenicData(simulation)
+
+    Inputs
+    ----------
+    simulation from LEVISClass
+
+    Returns
+    ----------
+    Dictionary containing data from <run ID>/scenic.in
+    """
+    fname = os.path.join(simulation.levisdir,"scenic.in")
 
     try:
         f_open = open(fname)
@@ -23,6 +34,6 @@ def Get_ScenicData(LEVIS):
         f_open.close()
 
     except:
-        raise FileNotFoundError('No scenic.in file found in {}'.format(LEVIS.levisdir))
+        raise FileNotFoundError('No scenic.in file found in {}'.format(simulation.levisdir))
 
     return data

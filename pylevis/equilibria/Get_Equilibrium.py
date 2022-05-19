@@ -12,25 +12,32 @@ class equilibrium:
         
         
 
-def GetEquilibrium(LEVIS):
+def GetEquilibrium(simulation):
+    """
+    GetEquilibrium(simulation)
+
+    Returns
+    ----------
+    equilibrium class
+    """
     # equilibrium = ReconstructEquilibrium() #Unfold equilibrium from matlab
 
     # How the equilibrium is read in depends on the actual equilibrium code
-    if LEVIS.equilibrium_type == "spec":
+    if simulation.equilibrium_type == "spec":
         # TODO: defer to SPEC routines
         pass
-    elif LEVIS.equilibrium_type == "terps":
+    elif simulation.equilibrium_type == "terps":
         pass
-    elif LEVIS.equilibrium_type == "animec":
+    elif simulation.equilibrium_type == "animec":
         pass
-    elif LEVIS.equilibrium_type == "satire":
+    elif simulation.equilibrium_type == "satire":
         pass
-    elif LEVIS.equilibrium_type == "terph5":
+    elif simulation.equilibrium_type == "terph5":
         pass
-    elif LEVIS.equilibrium_type == "netcdf":
+    elif simulation.equilibrium_type == "netcdf":
         pass
 
-    if LEVIS.light_version:
+    if simulation.light_version:
         # TODO: what is light version???
         if equilibrium.dim > 2:
             # equilibrium = ReconstructEquilibrium(self.dirrun,true,false,32,32)

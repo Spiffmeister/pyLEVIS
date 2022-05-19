@@ -1,4 +1,3 @@
-import os
 ## BINDING EXTERNAL ROUTINES TO LEVIS CLASS
 from .directories import Set_Directories
 
@@ -66,7 +65,7 @@ class simulation:
         self.init = initial_particle_dist(self)
 
         # Get plasma properties
-        # self.magnetic = backupequilibrium(self) #DecryptEquilibrium in matlab
+        # self.magnetic = BackupEquilibrium(self) #DecryptEquilibrium in matlab
 
         if self.scenic:
             self.scenicdata = Get_ScenicData(self)

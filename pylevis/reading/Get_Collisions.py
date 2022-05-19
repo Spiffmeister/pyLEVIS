@@ -9,6 +9,17 @@ from numpy import loadtxt
 Collision subclass
 '''
 class collisions():
+    """
+    collisions(fname)
+
+    Inputs
+    ----------
+    - fname: name of file to read in
+
+    Returns
+    ----------
+    Class for collisional data
+    """
     def __init__(self,fname):
         data = loadtxt(fname)
         
@@ -33,6 +44,17 @@ BINDING TO LEVIS
 '''
 
 def Get_Particle_Collisions(self):
+    """
+    Get_Particle_Collisions(self)
+
+    Inputs
+    ----------
+    simulation class from LEVISClass
+
+    Returns
+    ----------
+    collision class object
+    """
     fname = os.path.join(self.dirdiag,"CheckCollisions.Radial")
 
     if os.path.exists(fname):

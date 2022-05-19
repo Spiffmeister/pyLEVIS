@@ -8,12 +8,23 @@ import warnings
 
 
 '''
-LEVIS
+simulation
 '''
 
-class backupequilibrium:
-    def __init__(self,LEVIS):
-        fname = os.path.join(LEVIS.dirrun,"BackupEquilibrium.h5")
+class BackupEquilibrium:
+    """
+    BackupEquilibrium(simulation)
+
+    Inputs
+    ----------
+    simulation in LEVISClass
+
+    Returns
+    ----------
+    BackupEquilibrium class with contents based on the equilibrium type
+    """
+    def __init__(self,simulation):
+        fname = os.path.join(simulation.dirrun,"BackupEquilibrium.h5")
         
         if os.path.exists(fname):
             print("Processing backup equilibrium")
@@ -32,12 +43,12 @@ class backupequilibrium:
                 self.eq_type = "UNKNOWN"
             
             # Check if the equilibrium types match
-            if self.eq_type != LEVIS.equilibrium_type:
-                warnings.warn("Warning backup equilibrium type does not match LEVIS equilibrium type.")
+            if self.eq_type != simulation.equilibrium_type:
+                warnings.warn("Warning backup equilibrium type does not match simulation equilibrium type.")
 
             # Calling readin functions
             if self.eq_type in ["ANIMEC","VMEC","SATIRE","SPEC"]:
-                self.read_vmec(f_data)
+                self.__read_vmec(f_data)
             elif self.eq_type == "SOLOVEV": #TODO
                 pass
             elif self.eq_type == "MINERVA": #TODO
@@ -45,7 +56,7 @@ class backupequilibrium:
             elif self.eq_type == "DCON": #TODO
                 pass
             elif self.eq_type == "UNKNOWN": #TODO
-                    self.read_vmec(f_data)
+                    self.__read_vmec(f_data)
                 # try:
                 #     pass
                 # except:
@@ -58,31 +69,31 @@ class backupequilibrium:
         
                
 
-    def read_vmec(self,f_data):
+    def __read_vmec(self,f_data):
         # READ IN ANIMEC, VMEC, SATIRE AND SPEC EQUILIBRIA
-        self.read_data_halfscalar(f_data["data/half_scalar"])
-        self.read_data_fullscalar(f_data["data/full_scalar"])
-        self.read_data_halfvector(f_data["data/half_vector"])
-        self.read_data_halfflux(f_data["data/half_flux"])
+        self.__read_data_halfscalar(f_data["data/half_scalar"])
+        self.__read_data_fullscalar(f_data["data/full_scalar"])
+        self.__read_data_halfvector(f_data["data/half_vector"])
+        self.__read_data_halfflux(f_data["data/half_flux"])
 
         self.phcorr     = 0. #What is this??
         self.Vrad       = f_data["data/Vrad"]
 
 
-    def read_generic(self,f_data):
+    def __read_generic(self,f_data):
         pass
 
     '''
         READ IN DATA
     '''
-    def read_data_halfscalar(self,half_scalar):
+    def __read_data_halfscalar(self,half_scalar):
         # TODO: is this right???
         self.B      = half_scalar[:,:,:,0]
         self.jac    = half_scalar[:,:,:,4]
         self.sigma  = half_scalar[:,:,:,1]
         self.tau    = half_scalar[:,:,:,2]
     
-    def read_data_fullscalar(self,full_scalar):
+    def __read_data_fullscalar(self,full_scalar):
         # full scalar
         self.R      = full_scalar[:,:,:,0]
         self.Z      = full_scalar[:,:,:,1]
@@ -95,7 +106,7 @@ class backupequilibrium:
         self.dldu   = full_scalar[:,:,:,8]
         self.dldv   = full_scalar[:,:,:,9]
     
-    def read_data_halfvector(self,half_vector):            
+    def __read_data_halfvector(self,half_vector):            
         # half vector
         self.grad_Bs= half_vector[:,:,:,0]
         self.grad_Bu= half_vector[:,:,:,1]
@@ -115,7 +126,7 @@ class backupequilibrium:
         self.Ky     = half_vector[:,:,:,15]
         self.Kz     = half_vector[:,:,:,16]
 
-    def read_data_halfflux(self,half_flux):
+    def __read_data_halfflux(self,half_flux):
         # half flux
         self.Phip   = half_flux[:,1]
         self.Psip   = half_flux[:,2]
@@ -162,8 +173,8 @@ class backupequilibrium:
 
 
 '''
-BINDING TO LEVIS
+BINDING TO simulation
 '''
 
 def BIND_Get_Backup_Equilibrium(self):
-    return backupequilibrium(self)
+    return BackupEquilibrium(self)

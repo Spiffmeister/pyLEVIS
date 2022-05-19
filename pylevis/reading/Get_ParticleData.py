@@ -10,7 +10,21 @@ class single_particle():
     """
     single_particle(simulation,index=-1)
 
-    Class for particles including methods for reading in and pulling attributes
+    Class for particles including methods for reading in and pulling attributes.
+
+    Inputs
+    ----------
+    - simulation
+        the simulation class from LEVISClass
+    Optional Inputs
+    ----------
+    - index = -1 (default)
+        Which particle to read in
+
+    Returns
+    ----------
+    particle class:
+        Either a complete particle object or an empty particle
     """
     def __init__(self,simulation,index=-1):
         n_ele = 24
@@ -78,52 +92,65 @@ class single_particle():
 
     def __read_single_particle(self,fulldata,n_ele=25):
         # The file format expected
-        '''Read in particle data from particle.n data file'''
-        single_particle.t              = fulldata[0:-1:n_ele]
-        single_particle.s              = fulldata[1:-1:n_ele]
-        single_particle.th             = fulldata[2:-1:n_ele]
-        single_particle.zeta           = fulldata[3:-1:n_ele]
-        single_particle.gy             = fulldata[4:-1:n_ele]
-        single_particle.R              = fulldata[5:-1:n_ele]
-        single_particle.Z              = fulldata[6:-1:n_ele]
-        single_particle.ph             = fulldata[7:-1:n_ele]
-        single_particle.E              = fulldata[8:-1:n_ele]
-        single_particle.lam            = fulldata[9:-1:n_ele]
-        single_particle.Ptor           = fulldata[10:-1:n_ele]
-        single_particle.Ppol           = fulldata[11:-1:n_ele]
-        single_particle.muOqp          = fulldata[12:-1:n_ele]
-        single_particle.modB           = fulldata[13:-1:n_ele]
-        single_particle.gc_s           = fulldata[14:-1:n_ele]
-        single_particle.gc_th          = fulldata[15:-1:n_ele]
-        single_particle.gc_zeta        = fulldata[16:-1:n_ele]
-        single_particle.gc_R           = fulldata[17:-1:n_ele]
-        single_particle.gc_Z           = fulldata[18:-1:n_ele]
-        single_particle.gc_ph          = fulldata[19:-1:n_ele]
-        single_particle.field_variation= fulldata[20:-1:n_ele]
-        single_particle.norm_curv      = fulldata[21:-1:n_ele]
-        single_particle.geod_curv      = fulldata[22:-1:n_ele]
-        single_particle.w              = fulldata[23:-1:n_ele]
+        """
+        __read_single_particle(self,fulldata,n_ele=25)
+
+        Returns
+        ----------
+        Particle data from particle.i data file
+        """
+        self.t              = fulldata[0:-1:n_ele]
+        self.s              = fulldata[1:-1:n_ele]
+        self.th             = fulldata[2:-1:n_ele]
+        self.zeta           = fulldata[3:-1:n_ele]
+        self.gy             = fulldata[4:-1:n_ele]
+        self.R              = fulldata[5:-1:n_ele]
+        self.Z              = fulldata[6:-1:n_ele]
+        self.ph             = fulldata[7:-1:n_ele]
+        self.E              = fulldata[8:-1:n_ele]
+        self.lam            = fulldata[9:-1:n_ele]
+        self.Ptor           = fulldata[10:-1:n_ele]
+        self.Ppol           = fulldata[11:-1:n_ele]
+        self.muOqp          = fulldata[12:-1:n_ele]
+        self.modB           = fulldata[13:-1:n_ele]
+        self.gc_s           = fulldata[14:-1:n_ele]
+        self.gc_th          = fulldata[15:-1:n_ele]
+        self.gc_zeta        = fulldata[16:-1:n_ele]
+        self.gc_R           = fulldata[17:-1:n_ele]
+        self.gc_Z           = fulldata[18:-1:n_ele]
+        self.gc_ph          = fulldata[19:-1:n_ele]
+        self.field_variation= fulldata[20:-1:n_ele]
+        self.norm_curv      = fulldata[21:-1:n_ele]
+        self.geod_curv      = fulldata[22:-1:n_ele]
+        self.w              = fulldata[23:-1:n_ele]
         if n_ele == 25:
-            single_particle.lvol           = fulldata[24:-1:n_ele].astype(int)
+            self.lvol           = fulldata[24:-1:n_ele].astype(int)
     
     def __empty_particle(self,equilibrium_type="spec"):
-        single_particle.mass   = 0
-        single_particle.charge = 0
-        single_particle.t      = numpy.array([])
-        single_particle.s      = numpy.array([])
-        single_particle.th     = numpy.array([])
-        single_particle.zeta   = numpy.array([])
-        single_particle.gy     = numpy.array([])
-        single_particle.rhotor = numpy.array([])
-        single_particle.ph     = numpy.array([])
-        single_particle.lam    = numpy.array([])
-        single_particle.E      = numpy.array([])
-        single_particle.R      = numpy.array([])
-        single_particle.Z      = numpy.array([])
+        """
+        __empty_particle(self,equilibrium_type="spec")
+
+        Returns
+        ----------
+        Missing particle object for lost particles
+        """
+        self.mass   = 0
+        self.charge = 0
+        self.t      = numpy.array([])
+        self.s      = numpy.array([])
+        self.th     = numpy.array([])
+        self.zeta   = numpy.array([])
+        self.gy     = numpy.array([])
+        self.rhotor = numpy.array([])
+        self.ph     = numpy.array([])
+        self.lam    = numpy.array([])
+        self.E      = numpy.array([])
+        self.R      = numpy.array([])
+        self.Z      = numpy.array([])
         # self.nt     = 0
-        single_particle.missing= True
+        self.missing= True
         if equilibrium_type == "spec":
-            single_particle.lvol   = numpy.array([])
+            self.lvol   = numpy.array([])
     
 
 
@@ -135,11 +162,22 @@ class single_particle():
 
 def BIND_Get_Particle(self,parts=[]):
     """
-    BIND_Get_Particle(self,parts=[])
+    BIND_Get_Particle(simulation,parts=[])
 
-    Method bound to simulation class for reading in particles
+    Method bound to simulation class for reading in particles.
+
+    Inputs
+    ----------
+    - simulation
+        Called from self.GetParticle(), self in simulation class
+    Optional Inputs
+    ----------
+    - parts=[]
+        If parts is empty, read all particles. Otherwise read in the particles listed in parts (indexing from 1)
     
-    - SELF is simulation class
+    Returns
+    ----------
+    Particle class
     """
     if self.params["dump_particles"]==0:
         # If there is no particle data abort

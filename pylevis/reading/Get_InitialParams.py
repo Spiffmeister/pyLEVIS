@@ -6,24 +6,27 @@ import os
 import warnings
 import re
 
-def Get_SimulationParameters(simulation):
+def Get_SimulationParameters(self):
     """
-    Get_SimulationParameters(simulation)
+    Get_SimulationParameters(self)
 
-    Gets the initial simulation parameters
+    GetPar in MATLAB routines.
+
+    Returns
+    ----------
+    dictionary 'params' with initial simulation params
     """
-    
     #Initialise parameters
     params = dict()
 
     # Add data parameters
-    params.update(Get_data(simulation))
+    params.update(Get_data(self))
     # Is the simulation using lorentzian
-    params.update(Get_Lorentzian(simulation))
+    params.update(Get_Lorentzian(self))
     # Get the number of processors used
-    params.update(Get_Parallel_Env(simulation))
+    params.update(Get_Parallel_Env(self))
     # Get the diffusivity parameters ## TODO
-    params["anom"] = Get_Diffusivity_Params(simulation) #FIX: nested dicts are bad to access
+    params["anom"] = Get_Diffusivity_Params(self) #FIX: nested dicts are bad to access
    
     return params
 
@@ -31,14 +34,18 @@ def Get_SimulationParameters(simulation):
 '''
 SUPPORT
 '''
-def Get_data(simulation):
+def Get_data(self):
     """
-    Get_data(simulation)
+    Get_data(self)
 
     Reads in the 'data' file in a LEVIS run
+
+    Returns
+    ----------
+    Dictionary of inputs from run/<run ID>/data
     """
     # Construct file name
-    filename = os.path.join(simulation.dirrun,"data")
+    filename = os.path.join(self.dirrun,"data")
 
     # Possible keys in the parameter files
     # Keys for floats
@@ -62,25 +69,35 @@ def Get_data(simulation):
                     data[key] = int(add[1])
         f_open.close()
     else:
-        raise FileNotFoundError('No data file found in {}'.format(simulation.dirrun))
+        raise FileNotFoundError('No data file found in {}'.format(self.dirrun))
     
     return data
 
 
-def Get_Lorentzian(simulation):
+def Get_Lorentzian(self):
     """
-    If the file forentz_orbits exists sets to true
+    Get_Lorentzian(self)
+
+    Returns
+    ----------
+    True or false if file runs/<run ID>/lorentz_orbits exist
     """
-    filename = os.path.join(simulation.dirdiag,"lorentz_orbits")
+    filename = os.path.join(self.dirdiag,"lorentz_orbits")
     if os.path.exists(filename):
         return {"lorentzian":True}
     else:
         return {"lorentzian":False}
 
 
-def Get_Parallel_Env(simulation):
-    ''' Check if simulation was executed in parallel '''
-    filename = os.path.join(simulation.dirdiag,"ParaEnv")
+def Get_Parallel_Env(self):
+    """
+    Get_Parallel_Env(self)
+
+    Returns
+    ----------
+    Get number of processors from runs/<run ID>/ParaEnv
+    """
+    filename = os.path.join(self.dirdiag,"ParaEnv")
     if os.path.exists(filename):
         with open(filename,'r') as f_open:
             return {"nprocs":int(f_open.readline())}
@@ -89,9 +106,17 @@ def Get_Parallel_Env(simulation):
         return {"nprocs":1}
 
 
-def Get_Diffusivity_Params(simulation):
+def Get_Diffusivity_Params(self):
+    """
+    Get_Diffusivity_Params(self)
+
+    Returns
+    ----------
+    Diffusivity parameters from file runs/<run ID>/diffusivity.parameters
+    """
+
     ''' Check diffusivity parameters '''
-    filename = os.path.join(simulation.dirdiag,"diffusivity.parameters")
+    filename = os.path.join(self.dirdiag,"diffusivity.parameters")
     data = dict()
     keys_data_float = ["D0es","x0","sigma_x"]
 

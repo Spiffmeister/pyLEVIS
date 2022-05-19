@@ -7,32 +7,48 @@ import warnings
 from .ext_fns import ext_rhotor, ext_v, ext_vpar, ext_vperp
 
 class initial_particle_dist:
-    def __init__(self,LEVIS):
-        self.Get_InitialParticle(LEVIS)
+    """
+    initial_particle_dist(simulation)
 
-        # self.read_tauparticle(LEVIS.dirrun)
+    Class containing the initial particle distribution
 
-    def Get_InitialParticle(self,LEVIS):
+    Inputs
+    ----------
+    simulation class from LEVISClass
+
+    Returns
+    ----------
+    initial_particle_dist class containing initial particle data
+    """
+    def __init__(self,simulation):
+        self.Get_InitialParticle(simulation)
+
+        # self.__read_tauparticle(simulation.dirrun)
+
+    def Get_InitialParticle(self,simulation):
+        """
+        See initial_particle_dist(simulation)
+        """
         # Check the init particle distribution type and call reading fn
         exts = ["dat","h5"]
         for ext in exts:
             try:
-                fname = glob.glob(os.path.join(LEVIS.dirrun,"single.particle."+ext))[0]
+                fname = glob.glob(os.path.join(simulation.dirrun,"single.particle."+ext))[0]
                 break
             except IndexError:
                 #Make sure if this fails it doesn't try to read nothing
                 ext = "" 
         # Read in file
         if ext == "dat":
-            self.read_init_dat(LEVIS.equilibrium_type,fname)
+            self.__read_init_dat(simulation.equilibrium_type,fname)
         elif ext == "h5":
-            self.read_init_h5(fname)
+            self.__read_init_h5(fname)
         else:
             raise FileNotFoundError("No h5 or dat single particle file found")
         
 
         # TODO: what does this file look like???
-        f_alpha = os.path.join(LEVIS.dirrun,"fusion_alpha.out")
+        f_alpha = os.path.join(simulation.dirrun,"fusion_alpha.out")
         if os.path.exists(f_alpha):
             # TODO: Does nothing in MATLAB routines
             # alphaprob = numpy.loadtxt(f_alpha)
@@ -42,8 +58,12 @@ class initial_particle_dist:
 
 
 
-    def read_init_dat(self,equilibrium_type,fname):
-        # single.particle.dat reading
+    def __read_init_dat(self,equilibrium_type,fname):
+        """
+        __read_init_dat(self,equilibrium_type,fname)
+
+        Open single.particle.dat and read in data
+        """
         # Get the # of parts
         f_open = open(fname)
         self.np = int(f_open.readline())
@@ -61,7 +81,12 @@ class initial_particle_dist:
         if equilibrium_type == "spec":
             self.lvol  = data[:,8]
     
-    def read_init_h5(self,fname):
+    def __read_init_h5(self,fname):
+        """
+        __read_init_h5(self,fname)
+
+        Open single.particle.h5 and read in data
+        """
         # single.particle.h5 reading
         f_open = h5py.File(fname)
         self.np = int(f_open["nparts"])
@@ -89,7 +114,12 @@ class initial_particle_dist:
         except:
             warnings.warn('Not a generated distribution')
         
-    def read_tauparticle(self,dirname):
+    def __read_tauparticle(self,dirname):
+        """
+        __read_tauparticle(self,dirname)
+
+        Open TauParticle file and read in data
+        """
         # TODO: what does this file look like???
         f_turn = os.path.join(dirname,"TauParticle")
         if os.path.exists(f_turn):
@@ -110,7 +140,12 @@ class initial_particle_dist:
             self.ph_final[index_final] = ph_final
             self.index_final = index_final
     
-    def read_EcrossB(self,fdir):
+    def __read_EcrossB(self,fdir):
+        """
+        __read_EcrossB(self,fdir)
+
+        Open EcrossB.in file and read in data
+        """
         # TODO
         # Get initial potential energy data
         fname = os.path.join(fdir,"EcrossB.in")
