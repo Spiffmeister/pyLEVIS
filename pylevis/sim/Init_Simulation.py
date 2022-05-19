@@ -14,21 +14,31 @@ from .Init_ParticleDistribution import create_particle_distribution, write_distr
 
 class new_simulation:
     '''
-    Set up new simulation object. Inputs are:
-    simname = name of simulation - will prefix with prob if not added by user
-    nparts = number of particles in simulation
-    eqfile = path/to/equilibrium/file
-    Optional input:
-    eqtype = type of equilibrium file, default "spec"
-    machine = computer user is running simulation on, alters function of run_simulation()
-        method, default is 'local'
+        new_simulation(simname,nparts,eqfile="",eqtype="spec",machine='local')
+
+    Inputs:
+    ---------
+        simname : name of simulation - will prefix with prob if not added by user
+        nparts  : number of particles in simulation
+        eqfile  : path/to/equilibrium/file
+    Optional Input:
+    ---------
+        eqtype  : type of equilibrium file, default "spec"
+        machine : computer user is running simulation on, alters function of run_simulation()
+            method, default is 'local'
     Internal methods:
     generate_particles(), create_simulation(), run_simulation()
 
     Simulation settings stored in simulation.data object
+
+    A simulation can be constructed by running:
+    1. new_simulation()
+    2. generate_particles()
+    3. create_simulation()
+    4. run_simulation()
     '''
     
-    def __init__(self,simname,nparts,eqfile,eqtype="spec",machine='local'):
+    def __init__(self,simname,nparts,eqfile="",eqtype="spec",machine='local'):
         if "prob" not in simname:
             simname = "prob"+simname
 
@@ -52,15 +62,21 @@ class new_simulation:
         self.machine = machine
         self.avail_machines = ['local']
         print("Config for new simulation created")
-        print("Use simulation.create_simulation() to generate files")
+        print("Use new_simulation.create_simulation() to generate files")
+        if self.eqfile == "":
+            print("set new_simulation.")
 
 
     ### BINDING TO EXTERNAL FUNCTIONS ###
-    def generate_particles(self,R,pol,tor,vpar,E,M=1,C=1,weight=1,volmax=1):
+    def generate_particles(self,R,pol,tor,vpar,E,M=1,C=1,weight=1,vols=[0]):
         '''
+        generate_particles(self,R,pol,tor,vpar,E,M=1,C=1,weight=1,vols=[0])
+
         radial position, poloidal angle, toroidal angle, v_parallel/v, energy [eV], mass ratio to proton, charge ratio to proton, statistical weight, number of volumes in equilibrium (spec only)
         '''
-        self.particles = create_particle_distribution(self.nparts,R,pol,tor,vpar,E,M=M,C=C,weight=weight,volmax=volmax)
+        if (self.equilibrium_type == "spec") & (vols[0] == 0):
+            vols[0] = 1
+        self.particles = create_particle_distribution(self.nparts,R,pol,tor,vpar,E,mass_ratio=M,charge_ratio=C,weight=weight,vol=vols)
         avs = numpy.mean(self.particles[:,2])
         avp = numpy.mean(self.particles[:,3])
         avt = numpy.mean(self.particles[:,4])
@@ -104,9 +120,12 @@ class new_simulation:
 
         # Grab equilibrium file
         if not os.path.exists(self.eqfile):
-            raise
+            raise Exception('Equilibrium file does not exist, check the path')
         simeq = os.path.join(self.simdir,"eq.spec.h5")
-        shutil.copy2(self.eqfile,simeq)
+        try:
+            os.symlink(self.eqfile,simeq)
+        except:
+            shutil.copy2(self.eqfile,simeq)
 
 
         # Get the LEVIS program and postprocessing program

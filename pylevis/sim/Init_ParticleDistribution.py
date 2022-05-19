@@ -8,20 +8,46 @@ import os
 
 
 
-def create_particle_distribution(npart,R,pol,tor,vpar,E,M=1,C=1,weight=1,volmax=1):
+def create_particle_distribution(npart,s,pol,tor,vpar,E,mass_ratio=1,charge_ratio=1,weight=1,vol=[0]):
     '''
     Create a distribution of n particles
     R, E, vpar and vol are lists of [Rmin,Rmax] for example
     Optional arguments: M, C, weight, volmax
     '''
+    def gen(param):
+        if type(param) in [int,float]:
+            return param
+        else:
+            return numpy.random.uniform(low=param[0],high=param[1],size=npart)
+    
     npartchk(npart)
-    if volmax == 0:
+
+    if (vol[0] == 0) and (len(vol) == 1):
         parts = numpy.zeros([npart, 8])
     else:
         parts = numpy.zeros([npart, 9])
-    for i in range(npart): #This loop is unnecessary
-        part = createpart(R,pol,tor,vpar,E,M,C,weight,volmax=volmax)
-        parts[i,:] = part
+    
+    # mass ratio to proton
+    parts[:,0] = gen(mass_ratio)
+    # charge ratio to proton
+    parts[:,1] = gen(charge_ratio)
+    # Radial position
+    parts[:,2] = gen(s) # s assignment
+    # Poloidal angle
+    parts[:,3] = gen(pol)
+    # Toroidal angle
+    parts[:,4] = gen(tor)
+    # v_parallel/v
+    parts[:,5] = gen(vpar)
+    # Energy [eV]
+    parts[:,6] = gen(E)
+    # Statistical weight
+    parts[:,7] = gen(weight)
+    # Volumes if 
+    if len(vol) > 1:
+        parts[:,8] = numpy.random.randint(low=vol[0],high=vol[-1],size=npart)
+    elif (len(vol) == 1) and (vol[0] != 0):
+        parts[:,8] = vol[0]
     
     return parts
 
@@ -48,51 +74,6 @@ def write_distribution(fpath,dist,filetype='dat'):
 '''
 INTERNAL FUNCTIONS
 '''
-# PARTICLE CREATION
-def createpart(R,pol,tor,vpar,E,Mrat,Crat,weight,volmax=1):
-    '''
-    Create a single particle
-    '''
-    # radial position
-    if type(R) != int:
-        r = numpy.random.uniform(low=R[0],high=R[1]*volmax)
-    else:
-        r = R
-    s = r%2 #Ensure the particle is within the computational volume
-    # L_vol -- for SPEC equilibria
-    if volmax > 0:
-        for i in range(volmax):
-            if r/(i+1)<2:
-                lvol = i+1
-    # v_parallel/v
-    if type(pol) != int:
-        pol = numpy.random.uniform(low=pol[0],high=pol[1])
-    if type(tor) != int:
-        tor = numpy.random.uniform(low=tor[0],high=tor[1])
-    if type(vpar) != int:
-        vpar = numpy.random.uniform(low=vpar[0],high=vpar[1])
-    # Energy (eV)
-    if type(E) != int:
-        E = numpy.random.uniform(low=E[0],high=E[1])
-    if type(Mrat) != int:
-        M = numpy.random.uniform(low=Mrat[0],high=Mrat[1])
-    else:
-        M = Mrat
-    if type(Crat) != int:
-        C = numpy.random.uniform(low=Crat[0],high=Crat[1])
-    else:
-        C = Crat
-    if type(weight) != int:
-        weight = numpy.random.uniform(low=weight[0],high=weight[1])
-    
-    # mass ratio to proton | charge ratio to proton | radial position | poloidal angle | toroidal angle | v_parallel/v | energy [eV] | statistical weight | lvol
-    if volmax > 0:
-        print(lvol)
-        return numpy.array([M,C,s,pol,tor,vpar,E,weight,lvol])
-    else:
-        return numpy.array([M,C,s,pol,tor,vpar,E,weight])
-
-
 
 # CHECK NPARTS VS NCPUS
 def npartchk(npart,machine='local'):
