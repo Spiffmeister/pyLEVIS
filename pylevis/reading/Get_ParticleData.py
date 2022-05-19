@@ -7,84 +7,36 @@ import numpy
 from .ext_fns import ext_rhotor, ext_v, ext_vpar, ext_vperp
 
 class single_particle():
-    '''
-    Class for single particles including methods for reading in and pulling attributes
-    '''
-    def __init__(self,LEVIS,index=-1):
+    """
+    single_particle(simulation,index=-1)
+
+    Class for particles including methods for reading in and pulling attributes
+    """
+    def __init__(self,simulation,index=-1):
         n_ele = 24
-        if LEVIS.equilibrium_type == "spec":
+        if simulation.equilibrium_type == "spec":
             n_ele += 1
-        if LEVIS.params["lorentzian"]:
+        if simulation.params["lorentzian"]:
             n_ele += 2  ### TODO
             raise("Lorentzian particles are currently not implemented for reader")
         # Generate path to particle file
-        particle_file = os.path.join(LEVIS.dirdiag,"particle_data","particle."+str(index+1))
+        particle_file = os.path.join(simulation.dirdiag,"particle_data","particle."+str(index+1))
         if os.path.isfile(particle_file):
             # If the file exists read it
             fulldata = numpy.loadtxt(particle_file)
             if numpy.size(fulldata)!=0:
                 # If data exists read in
-                self.read_single_particle(fulldata,n_ele)
+                self.__read_single_particle(fulldata,n_ele)
                 self.missing = False
-                self.mass = LEVIS.init.mass[index]
-                self.charge = LEVIS.init.charge[index]
+                self.mass = simulation.init.mass[index]
+                self.charge = simulation.init.charge[index]
             else:
                 # Otherwise create empty particle
-                self.empty_particle()
+                self.__empty_particle()
         else:
             raise("Read failed: Particle "+str(index)+" does not exist.")
 
-    def read_single_particle(self,fulldata,n_ele=25):
-        # The file format expected
-        '''Read in particle data from particle.n data file'''
-        self.t              = fulldata[0:-1:n_ele]
-        self.s              = fulldata[1:-1:n_ele]
-        self.th             = fulldata[2:-1:n_ele]
-        self.zeta           = fulldata[3:-1:n_ele]
-        self.gy             = fulldata[4:-1:n_ele]
-        self.R              = fulldata[5:-1:n_ele]
-        self.Z              = fulldata[6:-1:n_ele]
-        self.ph             = fulldata[7:-1:n_ele]
-        self.E              = fulldata[8:-1:n_ele]
-        self.lam            = fulldata[9:-1:n_ele]
-        self.Ptor           = fulldata[10:-1:n_ele]
-        self.Ppol           = fulldata[11:-1:n_ele]
-        self.muOqp          = fulldata[12:-1:n_ele]
-        self.modB           = fulldata[13:-1:n_ele]
-        self.gc_s           = fulldata[14:-1:n_ele]
-        self.gc_th          = fulldata[15:-1:n_ele]
-        self.gc_zeta        = fulldata[16:-1:n_ele]
-        self.gc_R           = fulldata[17:-1:n_ele]
-        self.gc_Z           = fulldata[18:-1:n_ele]
-        self.gc_ph          = fulldata[19:-1:n_ele]
-        self.field_variation= fulldata[20:-1:n_ele]
-        self.norm_curv      = fulldata[21:-1:n_ele]
-        self.geod_curv      = fulldata[22:-1:n_ele]
-        self.w              = fulldata[23:-1:n_ele]
-        if n_ele == 25:
-            self.lvol           = fulldata[24:-1:n_ele].astype(int)
-        
 
-    def empty_particle(self,equilibrium_type="spec"):
-        self.mass   = 0
-        self.charge = 0
-        self.t      = numpy.array([])
-        self.s      = numpy.array([])
-        self.th     = numpy.array([])
-        self.zeta   = numpy.array([])
-        self.gy     = numpy.array([])
-        self.rhotor = numpy.array([])
-        self.ph     = numpy.array([])
-        self.lam    = numpy.array([])
-        self.E      = numpy.array([])
-        self.R      = numpy.array([])
-        self.Z      = numpy.array([])
-        # self.nt     = 0
-        self.missing= True
-        if equilibrium_type == "spec":
-            self.lvol   = numpy.array([])
-        
-    
     '''
         Calculate these values when required rather than storing them
     '''
@@ -122,19 +74,73 @@ class single_particle():
         return self.gc_R*numpy.sin(self.gc_ph)
     def gc_z(self):
         return self.gc_Z
+    
+
+    def __read_single_particle(self,fulldata,n_ele=25):
+        # The file format expected
+        '''Read in particle data from particle.n data file'''
+        single_particle.t              = fulldata[0:-1:n_ele]
+        single_particle.s              = fulldata[1:-1:n_ele]
+        single_particle.th             = fulldata[2:-1:n_ele]
+        single_particle.zeta           = fulldata[3:-1:n_ele]
+        single_particle.gy             = fulldata[4:-1:n_ele]
+        single_particle.R              = fulldata[5:-1:n_ele]
+        single_particle.Z              = fulldata[6:-1:n_ele]
+        single_particle.ph             = fulldata[7:-1:n_ele]
+        single_particle.E              = fulldata[8:-1:n_ele]
+        single_particle.lam            = fulldata[9:-1:n_ele]
+        single_particle.Ptor           = fulldata[10:-1:n_ele]
+        single_particle.Ppol           = fulldata[11:-1:n_ele]
+        single_particle.muOqp          = fulldata[12:-1:n_ele]
+        single_particle.modB           = fulldata[13:-1:n_ele]
+        single_particle.gc_s           = fulldata[14:-1:n_ele]
+        single_particle.gc_th          = fulldata[15:-1:n_ele]
+        single_particle.gc_zeta        = fulldata[16:-1:n_ele]
+        single_particle.gc_R           = fulldata[17:-1:n_ele]
+        single_particle.gc_Z           = fulldata[18:-1:n_ele]
+        single_particle.gc_ph          = fulldata[19:-1:n_ele]
+        single_particle.field_variation= fulldata[20:-1:n_ele]
+        single_particle.norm_curv      = fulldata[21:-1:n_ele]
+        single_particle.geod_curv      = fulldata[22:-1:n_ele]
+        single_particle.w              = fulldata[23:-1:n_ele]
+        if n_ele == 25:
+            single_particle.lvol           = fulldata[24:-1:n_ele].astype(int)
+    
+    def __empty_particle(self,equilibrium_type="spec"):
+        single_particle.mass   = 0
+        single_particle.charge = 0
+        single_particle.t      = numpy.array([])
+        single_particle.s      = numpy.array([])
+        single_particle.th     = numpy.array([])
+        single_particle.zeta   = numpy.array([])
+        single_particle.gy     = numpy.array([])
+        single_particle.rhotor = numpy.array([])
+        single_particle.ph     = numpy.array([])
+        single_particle.lam    = numpy.array([])
+        single_particle.E      = numpy.array([])
+        single_particle.R      = numpy.array([])
+        single_particle.Z      = numpy.array([])
+        # self.nt     = 0
+        single_particle.missing= True
+        if equilibrium_type == "spec":
+            single_particle.lvol   = numpy.array([])
+    
 
 
 
 
 '''
-    BINDING TO LEVIS CLASS
+    BINDING TO simulation CLASS
 '''
 
 def BIND_Get_Particle(self,parts=[]):
-    '''
-    Method bound to LEVIS class for reading in particles
-    - SELF is LEVIS class
-    '''
+    """
+    BIND_Get_Particle(self,parts=[])
+
+    Method bound to simulation class for reading in particles
+    
+    - SELF is simulation class
+    """
     if self.params["dump_particles"]==0:
         # If there is no particle data abort
         raise("single particle dumping is off, aborting read.")
@@ -155,5 +161,7 @@ def BIND_Get_Particle(self,parts=[]):
         
 
 
+
     
+
 

@@ -15,18 +15,40 @@ from .reading.Get_Scenic import Get_ScenicData
 BINDINGS FROM EQUILIBRIA
 '''
 from .equilibria.Get_BackupEquilibrium import BIND_Get_Backup_Equilibrium
-
 from .visualisation import plots_single_particle
 
 class simulation:
-    '''
-    Class for loading completed VENUS-LEVIS simulations. Inputs:
-    - runid = "name of run"
-    Optional Inputs:
-    - light_version
-    - simcomplete
-    - scenic
-    '''
+    """
+    simulation(runid,light_version=False,simcomplete=True,scenic=False)
+
+    Class for loading completed VENUS-LEVIS simulations.
+
+    Inputs
+    ----------
+    - runid: "NameOfRun" 
+        String of name of LEVIS run (example "probSPEC.0")
+    Optional Inputs
+    ----------
+    - light_version: True (default), False
+    - simcomplete: True (default), False 
+        Was the simulation completed or aborted?
+    - scenic: True, False (default)
+
+    Returns
+    ----------
+    simulation class with contents:
+        simcomplete, light_version, scenic, runid, equilibrium_type, params, init
+        params: initial simulation parameters
+
+    Internal/Bound Functions
+    ----------
+    GetParticle() - loads particle output data from LEVIS simulation
+    GetVolume()
+    GetCollisions()
+
+    plot_spconservation() - plots the conservation of energy and momentum and a 2D projection of orbits
+
+    """
     def __init__(self,runid,light_version=False,simcomplete=True,scenic=False):
         # Simulation properties
         self.simcomplete = simcomplete
@@ -75,14 +97,6 @@ class simulation:
     Visualisation
     '''
     plot_spconservation = plots_single_particle.plot_spconservation
-
-
-    '''
-    INTERNAL ROUTINES
-    '''
-    def select_eqtype(self):
-        # if 
-        self.equilibrium_type = "spec"
 
 
 

@@ -6,19 +6,24 @@ import os
 import warnings
 import re
 
-def Get_SimulationParameters(self):
+def Get_SimulationParameters(simulation):
+    """
+    Get_SimulationParameters(simulation)
+
+    Gets the initial simulation parameters
+    """
     
     #Initialise parameters
     params = dict()
 
     # Add data parameters
-    params.update(Get_data(self))
+    params.update(Get_data(simulation))
     # Is the simulation using lorentzian
-    params.update(Get_Lorentzian(self))
+    params.update(Get_Lorentzian(simulation))
     # Get the number of processors used
-    params.update(Get_Parallel_Env(self))
+    params.update(Get_Parallel_Env(simulation))
     # Get the diffusivity parameters ## TODO
-    params["anom"] = Get_Diffusivity_Params(self) #FIX: nested dicts are bad to access
+    params["anom"] = Get_Diffusivity_Params(simulation) #FIX: nested dicts are bad to access
    
     return params
 
@@ -26,10 +31,14 @@ def Get_SimulationParameters(self):
 '''
 SUPPORT
 '''
-def Get_data(self):
-    ''' Reading in the data file '''
+def Get_data(simulation):
+    """
+    Get_data(simulation)
+
+    Reads in the 'data' file in a LEVIS run
+    """
     # Construct file name
-    filename = os.path.join(self.dirrun,"data")
+    filename = os.path.join(simulation.dirrun,"data")
 
     # Possible keys in the parameter files
     # Keys for floats
@@ -53,23 +62,25 @@ def Get_data(self):
                     data[key] = int(add[1])
         f_open.close()
     else:
-        raise FileNotFoundError('No data file found in {}'.format(self.dirrun))
+        raise FileNotFoundError('No data file found in {}'.format(simulation.dirrun))
     
     return data
 
 
-def Get_Lorentzian(self):
-    ''' If the file is using Lorentzian physics??? '''
-    filename = os.path.join(self.dirdiag,"lorentz_orbits")
+def Get_Lorentzian(simulation):
+    """
+    If the file forentz_orbits exists sets to true
+    """
+    filename = os.path.join(simulation.dirdiag,"lorentz_orbits")
     if os.path.exists(filename):
         return {"lorentzian":True}
     else:
         return {"lorentzian":False}
 
 
-def Get_Parallel_Env(self):
-    ''' Check if LEVIS was executed in parallel '''
-    filename = os.path.join(self.dirdiag,"ParaEnv")
+def Get_Parallel_Env(simulation):
+    ''' Check if simulation was executed in parallel '''
+    filename = os.path.join(simulation.dirdiag,"ParaEnv")
     if os.path.exists(filename):
         with open(filename,'r') as f_open:
             return {"nprocs":int(f_open.readline())}
@@ -78,9 +89,9 @@ def Get_Parallel_Env(self):
         return {"nprocs":1}
 
 
-def Get_Diffusivity_Params(self):
+def Get_Diffusivity_Params(simulation):
     ''' Check diffusivity parameters '''
-    filename = os.path.join(self.dirdiag,"diffusivity.parameters")
+    filename = os.path.join(simulation.dirdiag,"diffusivity.parameters")
     data = dict()
     keys_data_float = ["D0es","x0","sigma_x"]
 
