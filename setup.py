@@ -11,5 +11,7 @@ setuptools.setup(
     url="https://github.com/Spiffmeister/pyLEVIS",
     author="Dean Muir",
     license="GNU 3.0",
-    packages=setuptools.find_packages()
+    package_dir={"":"pylevis"},
+    packages=setuptools.find_packages(where="pylevis"),
+    python_requires=">=3.6"
 )

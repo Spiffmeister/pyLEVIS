@@ -173,7 +173,8 @@ def BIND_Get_Particle(self,parts=[]):
     Optional Inputs
     ----------
     - parts=[]
-        If parts is empty, read all particles. Otherwise read in the particles listed in parts (indexing from 1)
+        If parts is empty, read all particles
+        Otherwise read in the particles listed in parts (indexing from 1) [convention from LEVIS]
     
     Returns
     ----------
@@ -182,7 +183,7 @@ def BIND_Get_Particle(self,parts=[]):
     if self.params["dump_particles"]==0:
         # If there is no particle data abort
         raise("single particle dumping is off, aborting read.")
-
+    
     if (parts == []):
         # If index is -1 and no list of parts is specified read all
         np = len(os.listdir(os.path.join(self.dirdiag,"particle_data")))

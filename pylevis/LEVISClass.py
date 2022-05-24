@@ -5,9 +5,9 @@ from .directories import Set_Directories
 BINDINGS FROM READING
 '''
 from .reading.Get_InitialParams import Get_SimulationParameters
-from .reading.Get_ParticleData import BIND_Get_Particle
+from .particles.ParticleClass import BIND_Get_Particle
+from .particles.Get_InitialParticleData import initial_particle_dist
 from .reading.Get_PlasmaVolume import BIND_Get_Volume
-from .reading.Get_InitialParticleData import initial_particle_dist
 from .reading.Get_Collisions import Get_Particle_Collisions
 from .reading.Get_Scenic import Get_ScenicData
 '''
@@ -39,7 +39,7 @@ class simulation:
         simcomplete, light_version, scenic, runid, equilibrium_type, params, init
         params: initial simulation parameters
 
-    Internal/Bound Functions
+    Internal/External Functions
     ----------
     GetParticle() - loads particle output data from LEVIS simulation
     GetVolume()
@@ -48,13 +48,14 @@ class simulation:
     plot_spconservation() - plots the conservation of energy and momentum and a 2D projection of orbits
 
     """
-    def __init__(self,runid,light_version=False,simcomplete=True,scenic=False):
+    def __init__(self,runid,light_version=False,simcomplete=True,scenic=False,large=False):
         # Simulation properties
         self.simcomplete = simcomplete
         self.light_version = light_version
         self.scenic = scenic        #SHOULD BE REMOVED AND ONLY BE PRESENT AS DICT???
         self.runid = runid
         self.equilibrium_type = "spec" #TODO rewrite for auto-detection
+        self.large = large #If the simulation is 'large'
 
         ''' Functions '''
         # Set directories
@@ -77,10 +78,12 @@ class simulation:
 
         # if simcomplete:
         #     self.GetMoments
+        print("Simualtion read, to read in particle data use the .GetParticle() function.\n")
+        print("If the simulation data is large, recommend setting simulation.large=True")
     
 
     ''' --- EXTERNAL BINDINGS --- '''
-    GetParticle = BIND_Get_Particle ##TODO: ensure particles with no data do not interrupt other routines.
+    GetParticle = BIND_Get_Particle
     SetDir = Set_Directories
 
     GetVolume = BIND_Get_Volume #Get_PlasmaVolume
