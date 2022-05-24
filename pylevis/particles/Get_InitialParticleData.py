@@ -21,14 +21,6 @@ class initial_particle_dist:
     initial_particle_dist class containing initial particle data
     """
     def __init__(self,simulation):
-        self.Get_InitialParticle(simulation)
-
-        # self.__read_tauparticle(simulation.dirrun)
-
-    def Get_InitialParticle(self,simulation):
-        """
-        See initial_particle_dist(simulation)
-        """
         # Check the init particle distribution type and call reading fn
         exts = ["dat","h5"]
         for ext in exts:
@@ -40,7 +32,7 @@ class initial_particle_dist:
                 ext = "" 
         # Read in file
         if ext == "dat":
-            self.__read_init_dat(simulation.equilibrium_type,fname)
+            self.__read_init_dat(fname,simulation.equilibrium_type)
         elif ext == "h5":
             self.__read_init_h5(fname)
         else:
@@ -58,7 +50,7 @@ class initial_particle_dist:
 
 
 
-    def __read_init_dat(self,equilibrium_type,fname):
+    def __read_init_dat(self,fname,equilibrium_type):
         """
         __read_init_dat(self,equilibrium_type,fname)
 

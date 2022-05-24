@@ -4,7 +4,7 @@ Plotting the energy and toroidal momentum conservation
 
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axis3D
-import pympl
+# import pympl
 
 # plt.rc('text',usetex=True) ## ISSUE WITH SUBPLOTS AND TEX??
 plt.rc('text',usetex=True)
@@ -58,7 +58,7 @@ def plot_spconservation(self,show=1):
         plt.show()
     return fig
 
-
+'''
 def plot_cartesian(self,show=1):
     """
     plot_cartesian(self,show=1)
@@ -79,5 +79,4 @@ def plot_cartesian(self,show=1):
     if show:
         plt.show()
     return fig
-
-
+'''

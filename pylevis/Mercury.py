@@ -9,11 +9,11 @@ from .particles.ParticleClass import BIND_Get_Particle
 from .particles.Get_InitialParticleData import initial_particle_dist
 from .reading.Get_PlasmaVolume import BIND_Get_Volume
 from .reading.Get_Collisions import Get_Particle_Collisions
-from .reading.Get_Scenic import Get_ScenicData
+from .reading.Get_Moments import moment
 '''
 BINDINGS FROM EQUILIBRIA
 '''
-from .equilibria.Get_BackupEquilibrium import BIND_Get_Backup_Equilibrium
+from .reading.Get_BackupEquilibrium import BIND_Get_Backup_Equilibrium
 from .visualisation import plots_single_particle
 
 class simulation:
@@ -55,14 +55,14 @@ class simulation:
         self.scenic = scenic        #SHOULD BE REMOVED AND ONLY BE PRESENT AS DICT???
         self.runid = runid
         self.equilibrium_type = "spec" #TODO rewrite for auto-detection
-        self.large = large #If the simulation is 'large'
+        self.large = large #TODO If the simulation is 'large'
 
         ''' Functions '''
         # Set directories
         self.SetDir()
 
         # Reading in initialised parameters
-        self.params = Get_SimulationParameters(self) #Get.Params
+        self.params = Get_SimulationParameters(self) #GetPar
         self.init = initial_particle_dist(self)
 
         # Get plasma properties
@@ -94,6 +94,8 @@ class simulation:
     def GetBackupEquilibrium(self):
         self.magnetic = BIND_Get_Backup_Equilibrium(self)
 
+    def GetMoments(self):
+        self.mom = moment(self.dirrun,self.vol,self.par)
 
     '''
     Visualisation

@@ -62,7 +62,7 @@ def Get_BGProfile(self):
     for chk in fnamechk:
         fname = os.path.join(self.dirrun,chk)
         if os.path.exists(fname):
-            # If it exists go ahead for read
+            # If it exists then read
             fname = os.path.join(self.dirrun,chk)
             self.BGProfile = Get_Profiles(fname=fname)
             return

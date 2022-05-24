@@ -1,10 +1,7 @@
-
-__version__ = "0.2"
-
-
-from .LEVISClass import simulation
-from .sim.Init_Simulation import new_simulation
-from . import visualisation as vis
+from .Mercury import simulation
+from .newsimulation.Init_Simulation import new_simulation
+# from . import visualisation as vis
+# from . import reading
 
 
 """

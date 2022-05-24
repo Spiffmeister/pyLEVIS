@@ -141,7 +141,7 @@ class single_particle():
         self.th     = numpy.array([])
         self.zeta   = numpy.array([])
         self.gy     = numpy.array([])
-        self.rhotor = numpy.array([])
+        # self.rhotor = numpy.array([])
         self.ph     = numpy.array([])
         self.lam    = numpy.array([])
         self.E      = numpy.array([])
