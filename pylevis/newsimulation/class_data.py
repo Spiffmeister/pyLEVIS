@@ -15,11 +15,11 @@ class data():
     default_dicts(), write(), read(), fill_data()
     """
     def __init__(self,npart=4):
-        self.simulation, self.collisions, self.equilibrium, self.diagnostics, self.postprocessing = self.default_dicts()
+        self.simulation, self.collisions, self.equilibrium, self.diagnostics, self.postprocessing = self.__default_dicts()
 
         self.simulation["nparts"] = npart
 
-    def default_dicts(self):
+    def __default_dicts(self):
         headers = ['simulation','collisions','equilibrium','diagnostics','postprocessing']
         simulation     = {"simulation_duration":int(42069),\
             "tfin":float(1.0e-5),\
@@ -57,7 +57,7 @@ class data():
     def optional_params(self):
         pass
 
-    def typecheck(self,var,vartype):
+    def __typecheck(self,var,vartype):
         # When writing we need to check the type of each variable is correct
         if type(var) != type(vartype):
             return type(vartype)(var)
@@ -74,7 +74,7 @@ class data():
         '''
         Writes a data file
         '''
-        tmp_sim, tmp_col, tmp_equ, tmp_diag, tmp_post = self.default_dicts()
+        tmp_sim, tmp_col, tmp_equ, tmp_diag, tmp_post = self.__default_dicts()
 
         fname = os.path.join(simpath,"data")
         f = open(fname,'w')
