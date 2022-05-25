@@ -4,7 +4,7 @@ import os
 import h5py
 import numpy
 from ..particles.ext_fns import ext_rhotor
-from ..auxil.constants import charge
+from ..constants import charge
 
 
 class moment:

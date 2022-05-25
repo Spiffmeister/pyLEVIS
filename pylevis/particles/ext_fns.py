@@ -3,7 +3,7 @@ These functions are bound to other routines, this avoids double coding when poss
 '''
 
 from numpy import sqrt
-from ..auxil.constants import charge
+from ..constants import charge
 
 '''
 Particle and init classes

@@ -2,18 +2,18 @@
 from .directories import Set_Directories
 
 '''
-BINDINGS FROM READING
+BINDINGS FROM io
 '''
-from .reading.Get_InitialParams import Get_SimulationParameters
+from .io.Get_InitialParams import Get_SimulationParameters
 from .particles.ParticleClass import BIND_Get_Particle
 from .particles.Get_InitialParticleData import initial_particle_dist
-from .reading.Get_PlasmaVolume import BIND_Get_Volume
-from .reading.Get_Collisions import Get_Particle_Collisions
-from .reading.Get_Moments import moment
+from .io.Get_PlasmaVolume import BIND_Get_Volume
+from .io.Get_Collisions import Get_Particle_Collisions
+from .io.Get_Moments import moment
 '''
 BINDINGS FROM EQUILIBRIA
 '''
-from .reading.Get_BackupEquilibrium import BIND_Get_Backup_Equilibrium
+from .io.Get_BackupEquilibrium import BIND_Get_Backup_Equilibrium
 from .visualisation import plots_single_particle
 
 class simulation:
@@ -61,7 +61,7 @@ class simulation:
         # Set directories
         self.SetDir()
 
-        # Reading in initialised parameters
+        # io in initialised parameters
         self.params = Get_SimulationParameters(self) #GetPar
         self.init = initial_particle_dist(self)
 

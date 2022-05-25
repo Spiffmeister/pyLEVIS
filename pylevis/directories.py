@@ -1,25 +1,33 @@
 # import os
 import os
 import pylevis
+import warnings
 
 '''
 EXTERNAL METHODS - BOUND TO LEVIS CLASS
 '''
 
-def Set_Directories(self):
+def Set_Directories(simulation):
     if pylevis.pylevis_settings.levis_directory == "":
-        self.levisdir = Getlevisdir()
+        #If global settings not set attempt to use cwd
+        simulation.levisdir = Getlevisdir()
+        warnings.warn("pylevis.pylevis_settings.levis_directory set temporarily, check help(pylevis.pylevis_settings) to set directories permanently")
     else:
-        self.levisdir = pylevis.pylevis_settings.levis_directory
+        simulation.levisdir = pylevis.pylevis_settings.levis_directory
+    
+    def testpath(fpath):
+        return os.path.join(simulation.levisdir,fpath)
 
-    if "prob" in self.runid:
-        tmpid = self.runid
+    if os.path.exists("prob"+simulation.runid):
+        simulation.dirrun = testpath("prob"+simulation.runid)
+    elif os.path.exists(simulation.runid):
+        simulation.dirrun = testpath(simulation.runid)
     else:
-        tmpid = "prob"+self.runid
+        raise Exception("simulation not found, check pylevis.pylevis_settings")
 
-    runpath = os.path.join(self.levisdir,"runs",tmpid)
-    self.dirrun = runpath
-    self.dirdiag = os.path.join(self.dirrun,"Diag")
+
+    simulation.dirdiag = os.path.join(simulation.dirrun,"Diag")
+    simulation.dirrun = dirrun
     
 
 '''
@@ -28,7 +36,5 @@ INTERNAL METHODS
 
 def Getlevisdir():
     return os.getcwd()
-
-
 
 

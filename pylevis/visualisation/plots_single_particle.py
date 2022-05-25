@@ -3,7 +3,7 @@ Plotting the energy and toroidal momentum conservation
 '''
 
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axis3D
+# from mpl_toolkits.mplot3d import Axis3D
 # import pympl
 
 # plt.rc('text',usetex=True) ## ISSUE WITH SUBPLOTS AND TEX??
