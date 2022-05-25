@@ -37,13 +37,17 @@ class __pylevis_settings():
         self.levis_directory = dir
         import configparser
         import os
+        import warnings
         config = configparser.ConfigParser()
         config.read('settings.ini')
         config.set('Paths','levis_directory',dir)
         if self.runs_directory == '': #If the runs directory is unset, try and set it now
-            runsdir = os.path.join(os.pathself.levis_directory,'runs')
+            runsdir = os.path.join(self.levis_directory,'runs')
             if os.path.exists(runsdir):
                 config.set('Paths','runs_directory',runsdir)
+                warnings.warn("runs directory also set, recommend checking pylevis_settings.runs_directory")
+            else:
+                warnings.warn('runs directory not set, use pylevis_settings.set_runs_directory')
         with open('settings.ini','w') as configfile:
             config.write(configfile)
 
@@ -53,6 +57,7 @@ class __pylevis_settings():
 
         Set 'dir' as the location of the outputs from VENUS-LEVIS - writes config and updates setting
         """
+        import configparser
         self.runs_directory = dir
         config = configparser.ConfigParser()
         config.read('settings.ini')

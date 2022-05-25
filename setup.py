@@ -13,4 +13,6 @@ setuptools.setup(
     packages=setuptools.find_packages('pylevis'),
     package_dir={'':'pylevis'},
     python_requires='>=3.6',
+    install_requires=['numpy','matplotlib'],
+    include_package_data=True
 )

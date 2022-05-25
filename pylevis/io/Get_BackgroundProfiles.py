@@ -39,7 +39,7 @@ def Get_Profiles(fname="",tokamak=[],shot=[]):
     
     if (fname=="") & (tokamak!=[]) & (shot!=[]):
         pass
-        # fname = os.path.join(Getlevisdir) ##TODO -- NEEDS DIRECTORY LINKING
+        # fname = os.path.join(Getdirlevis) ##TODO -- NEEDS DIRECTORY LINKING
     elif (fname==""):
         pass
     

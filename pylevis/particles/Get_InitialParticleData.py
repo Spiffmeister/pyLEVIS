@@ -62,16 +62,28 @@ class initial_particle_dist:
         f_open.close()
         # read in the rest
         data = numpy.loadtxt(fname,skiprows=1,max_rows=self.np)
-        self.mass      = data[:,0]
-        self.charge    = data[:,1]
-        self.s         = data[:,2]
-        self.th        = data[:,3]
-        self.ph        = data[:,4]
-        self.lam       = data[:,5]
-        self.E         = data[:,6]
-        self.w         = data[:,7]
-        if equilibrium_type == "spec":
-            self.lvol  = data[:,8]
+        if self.np > 1:
+            self.mass      = data[:,0]
+            self.charge    = data[:,1]
+            self.s         = data[:,2]
+            self.th        = data[:,3]
+            self.ph        = data[:,4]
+            self.lam       = data[:,5]
+            self.E         = data[:,6]
+            self.w         = data[:,7]
+            if equilibrium_type == "spec":
+                self.lvol  = data[:,8]
+        else:
+            self.mass      = numpy.array([data[0]])
+            self.charge    = numpy.array([data[1]])
+            self.s         = numpy.array([data[2]])
+            self.th        = numpy.array([data[3]])
+            self.ph        = numpy.array([data[4]])
+            self.lam       = numpy.array([data[5]])
+            self.E         = numpy.array([data[6]])
+            self.w         = numpy.array([data[7]])
+            if equilibrium_type == "spec":
+                self.lvol  = data[8]
     
     def __read_init_h5(self,fname):
         """
