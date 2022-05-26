@@ -10,7 +10,7 @@ import shutil
 
 
 class levis_installer:
-    def __init__(self):
+    def __init__(self,levisdir=""):
         self.source = {"LEVIS":"",\
             "futils":"utils/futils",\
             "hdf5":"/apps/hdf5/1.10.5p",\
@@ -20,6 +20,7 @@ class levis_installer:
         if "SPEC" in eqtype:
             self.source["SPEC_field_reader"] = "utils/SPEC-field-reader"
         self.machine_settings()
+        self.levisdir = levisdir
 
 
     ''' VENUS-LEVIS MACHINE FILES '''
@@ -46,15 +47,15 @@ class levis_installer:
     def get_machine(self,machine=""):
         ### Get the data in a machine file ###
         if machine == "":
-            fname = os.path.join(pylevis.pylevis_settings.levis_directory,machine+".mk")
+            fname = os.path.join(self.levisdir,machine+".mk")
         else:
-            fname = os.path.join(pylevis.pylevis_settings.levis_directory,self.machine+'.mk')
+            fname = os.path.join(self.levisdir,self.machine+'.mk')
         f = open(fname,'r')
         f.close()
 
     def generate_machine(self):
         ### Write a compiler settings file for a computer ###
-        fname = os.path.join(pylevis.pylevis_settings.levis_directory,"machines",self.machine+".mk")
+        fname = os.path.join(self.levisdir,"machines",self.machine+".mk")
         f = open(fname,"w")
         # Write compiler settings
         f.write("## compiler")

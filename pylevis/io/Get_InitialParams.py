@@ -171,7 +171,7 @@ def Get_ScenicData(simulation):
     ----------
     Dictionary containing data from <run ID>/scenic.in
     """
-    fname = os.path.join(simulation.dirlevis,"scenic.in")
+    fname = os.path.join(simulation.dirrun,"scenic.in")
 
     try:
         f_open = open(fname)
@@ -187,6 +187,6 @@ def Get_ScenicData(simulation):
         f_open.close()
 
     except:
-        raise FileNotFoundError('No scenic.in file found in {}'.format(simulation.dirlevis))
+        raise FileNotFoundError('No scenic.in file found in {}'.format(simulation.dirrun))
 
     return data

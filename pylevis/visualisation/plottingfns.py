@@ -1,12 +1,6 @@
 
-import sys
-sys.path.insert(0,"Z:/Git-stuff/pyLEVIS/")
-
 import matplotlib.pyplot as plt
 import numpy
-
-pylevis_settings.levis_directory("Z:/Git-Stuff/SPEC-LEVIS/venus-levis")
-
 
 
 

@@ -77,7 +77,7 @@ def export_h5(LEVIS,fname):
 
         f_data.create_dataset('nparts',         data=LEVIS.param["nparts"])
         f_data.create_dataset('tfin',           data=LEVIS.param["tfin"])
-        f_data.create_dataset('basedir',        data=LEVIS.rundir)
+        f_data.create_dataset('basedir',        data=LEVIS.dirrun)
         f_data.create_dataset('creation_date',  data=datetime.date.today())
 
         eq = f_data.create_group('eq')

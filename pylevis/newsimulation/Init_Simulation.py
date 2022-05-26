@@ -38,17 +38,15 @@ class new_simulation:
     4. run_simulation()
     '''
     
-    def __init__(self,simname,nparts,eqfile="",eqtype="spec",machine='local'):
+    def __init__(self,simname,nparts,eqfile="",eqtype="spec",exedir="",machine='local'):
         if "prob" not in simname:
             simname = "prob"+simname
 
         self.simname = simname
-        self.levdir = pylevis.pylevis_settings.levis_directory
-        self.simdir = os.path.join(self.levdir,"runs",self.simname)
+        self.exedir = exedir
+        self.simdir = simname
         self.equilibrium_type = eqtype
         self.eqfile = eqfile
-
-        self.levdir = pylevis.pylevis_settings.levis_directory
 
         self.nparts = nparts
         self.ncpus = 1
@@ -129,9 +127,8 @@ class new_simulation:
 
 
         # Get the LEVIS program and postprocessing program
-        bindir = os.path.join(self.levdir,"bin")
-        shutil.copy2(os.path.join(bindir,"mercury.x"),self.simdir)
-        shutil.copy2(os.path.join(bindir,"postprocessing.x"),self.simdir)
+        shutil.copy2(os.path.join(self.exedir,"mercury.x"),self.simdir)
+        shutil.copy2(os.path.join(self.exedir,"postprocessing.x"),self.simdir)
 
         # Check to make sure nparts is the same across configs
         if self.particles.shape[0] != self.nparts:
