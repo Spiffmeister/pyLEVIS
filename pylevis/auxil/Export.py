@@ -1,28 +1,28 @@
 '''
-EXPORT DATA FROM pyLEVIS.simulation
+EXPORT DATA FROM pylevis.simulation
 '''
 import os
 import datetime
 import h5py
 import pickle
 
-def Export(LEVIS,fname,etype="pickle"):
-    intype = str(type(LEVIS))
+def Export(simulation,fname,etype="pickle"):
+    intype = str(type(simulation))
     if "simulation" in intype:
         go = True
     else:
         pass
         # TODO: read in sim
         # Read in the simulation
-        # LEVIS = 
+        # simulation = 
 
-    os.mkdir(os.path.join(LEVIS.dirrun,"export"))
+    os.mkdir(os.path.join(simulation.dirrun,"export"))
     if go:
         if etype == "pickle":
             # Write to pickle file
-            export_pickle(LEVIS,fname)
+            export_pickle(simulation,fname)
         elif etype == "h5":
-            export_h5(LEVIS,fname)
+            export_h5(simulation,fname)
 
 
 
@@ -36,48 +36,48 @@ def export_pickle(sim,fname):
 
 
 
-def export_h5(LEVIS,fname):
+def export_h5(simulation,fname):
         # Ensure that particle orbits are loaded
         try:
-            LEVIS.sp
+            simulation.sp
         except AttributeError:
-            LEVIS.GetParticle
+            simulation.GetParticle
         # Ensure the initial data is loaded
         try:
-            LEVIS.init
+            simulation.init
         except:
             pass
         # Check if backup equilibrium data is loaded
         try:
-            LEVIS.magnetic
+            simulation.magnetic
         except:
             pass
         
         # Make export directory under run
-        os.mkdir(os.path.join(LEVIS.dirrun,"export"))
+        os.mkdir(os.path.join(simulation.dirrun,"export"))
 
         f_data = h5py.File('export','w')
         
         init = f_data.create_group('init')
-        init.create_dataset('s',        data=LEVIS.init.s,      dtype=float)
-        init.create_dataset('rho',      data=LEVIS.init.rhotor, dtype=float)
-        init.create_dataset('th',       data=LEVIS.init.th,     dtype=float)
-        init.create_dataset('ph',       data=LEVIS.init.ph,     dtype=float)
-        init.create_dataset('lambda',   data=LEVIS.init.lam,    dtype=float)
-        init.create_dataset('E',        data=LEVIS.init.E,      dtype=float)
-        init.create_dataset('mass',     data=LEVIS.init.mass,   dtype=float)
-        init.create_dataset('charge',   data=LEVIS.init.charge, dtype=float)
-        init.create_dataset('R',        data=LEVIS.init.R,      dtype=float)
-        init.create_dataset('Z',        data=LEVIS.init.Z,      dtype=float)
-        init.create_dataset('x',        data=LEVIS.init.x,      dtype=float)
-        init.create_dataset('y',        data=LEVIS.init.y,      dtype=float)
-        init.create_dataset('vpar',     data=LEVIS.init.vpar,   dtype=float)
-        init.create_dataset('vperp',    data=LEVIS.init.vperp,  dtype=float)
-        init.create_dataset('muOqp',    data=LEVIS.init.muOqp,  dtype=float)
+        init.create_dataset('s',        data=simulation.init.s,      dtype=float)
+        init.create_dataset('rho',      data=simulation.init.rhotor, dtype=float)
+        init.create_dataset('th',       data=simulation.init.th,     dtype=float)
+        init.create_dataset('ph',       data=simulation.init.ph,     dtype=float)
+        init.create_dataset('lambda',   data=simulation.init.lam,    dtype=float)
+        init.create_dataset('E',        data=simulation.init.E,      dtype=float)
+        init.create_dataset('mass',     data=simulation.init.mass,   dtype=float)
+        init.create_dataset('charge',   data=simulation.init.charge, dtype=float)
+        init.create_dataset('R',        data=simulation.init.R,      dtype=float)
+        init.create_dataset('Z',        data=simulation.init.Z,      dtype=float)
+        init.create_dataset('x',        data=simulation.init.x,      dtype=float)
+        init.create_dataset('y',        data=simulation.init.y,      dtype=float)
+        init.create_dataset('vpar',     data=simulation.init.vpar,   dtype=float)
+        init.create_dataset('vperp',    data=simulation.init.vperp,  dtype=float)
+        init.create_dataset('muOqp',    data=simulation.init.muOqp,  dtype=float)
 
-        f_data.create_dataset('nparts',         data=LEVIS.param["nparts"])
-        f_data.create_dataset('tfin',           data=LEVIS.param["tfin"])
-        f_data.create_dataset('basedir',        data=LEVIS.dirrun)
+        f_data.create_dataset('nparts',         data=simulation.param["nparts"])
+        f_data.create_dataset('tfin',           data=simulation.param["tfin"])
+        f_data.create_dataset('basedir',        data=simulation.dirrun)
         f_data.create_dataset('creation_date',  data=datetime.date.today())
 
         eq = f_data.create_group('eq')
