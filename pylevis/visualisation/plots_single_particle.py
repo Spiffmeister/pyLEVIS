@@ -3,19 +3,19 @@ Plotting the energy and toroidal momentum conservation
 '''
 
 import matplotlib.pyplot as plt
-# from mpl_toolkits.mplot3d import Axis3D
+from mpl_toolkits.mplot3d import axis3d
 # import pympl
 
 # plt.rc('text',usetex=True) ## ISSUE WITH SUBPLOTS AND TEX??
 plt.rc('text',usetex=True)
-# plt.rc('preamble')
-# plt.rcParams.update({
-# 'text.usetex':True,
-# 'pgf.preamble':["\\usepackage"]
-# })
+plt.rc('preamble')
+plt.rcParams.update({
+'text.usetex':True,
+'pgf.preamble':["\\usepackage"]
+})
 
 
-def plot_spconservation(self,show=1):
+def plot_spconservation(self,parts=[],show=True):
     """
     plot_spconservation(self,show=1)
 
@@ -27,27 +27,16 @@ def plot_spconservation(self,show=1):
     ax2 = plt.subplot2grid((2,2),(1,0)) #Momentum loss
     ax3 = plt.subplot2grid((2,2),(0,1),rowspan=2) #R-Z position
 
-    parts = [key for key in self.sp.keys()]
-    missing = []
-    for i in (parts):
-        if not self.sp[i].missing:
-            ax1.plot(self.sp[i].t,self.sp[i].E/self.sp[i].E[0] - 1)
-            ax2.plot(self.sp[i].t,self.sp[i].Ptor/self.sp[i].Ptor[0] - 1)
-            ax3.plot(self.sp[i].R,self.sp[i].Z)
-        else: #skip missing particles
-            missing += [i]
+    if parts == []:
+        parts = [key for key in self.sp.keys()]
     
-    ax1.set_xlabel("t")
-    ax1.set_ylabel(r"$\Delta E/E_0$")
+    ax1, missing = __plot_particle_conservation(self,"E",parts,ax=ax1,show=False)
+    ax2, missing = __plot_particle_conservation(self,"Ptor",parts,ax=ax2,show=False)
+    ax3, missing = __plot_particle_property(self,"R","Z",parts,ax=ax3,show=False)
+
     ax1.ticklabel_format(axis='both',style='sci',scilimits=(0,0),useMathText=True)
-
-    ax2.set_xlabel("t")
-    ax2.set_ylabel(r"$\Delta P_\phi/P_{\phi,0}$")
     ax2.ticklabel_format(axis='both',style='sci',scilimits=(0,0),useMathText=True)
-
     ax3.axis('equal')
-    ax3.set_xlabel("R")
-    ax3.set_ylabel("Z")
 
     fig.tight_layout()
     
@@ -58,17 +47,19 @@ def plot_spconservation(self,show=1):
         plt.show()
     return fig
 
-'''
-def plot_cartesian(self,show=1):
+
+def plot_cartesian(self,parts=[],show=True):
     """
     plot_cartesian(self,show=1)
 
     Plot the particles position in cartesian space
     """
     fig = plt.figure()
-    ax = Axis3D(fig)
+    ax = axis3d(fig)
 
-    parts = [key for key in self.sp.keys()]
+    if parts == []:
+        parts = [key for key in self.sp.keys()]
+    
     missing = []
     for i in parts:
         if not self.sp[i].missing:
@@ -76,7 +67,91 @@ def plot_cartesian(self,show=1):
         else:
             missing += [i]
     
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    ax.set_zlabel('z')
+
     if show:
         plt.show()
     return fig
-'''
+
+
+def plot_RZ(self,parts=[],ax=None,show=True):
+    """
+    plot_RZ(self,parts=[],show=1,ax=None)
+    """
+    if ax == None:
+        ax = plt.gca()
+    
+    if parts == []:
+        parts = [key for key in self.sp.keys()]
+    
+    for i in parts:
+        ax.plot(self.sp[i].R,self.sp[i].Z)
+    
+    ax.set_xlabel('R')
+    ax.set_ylabel('Z')
+
+    if show:
+        ax.show()
+
+    return ax
+
+
+def __plot_particle_conservation(self,property,parts=[],ax=None,show=True):
+    """
+    __plot_particle_conservation(self,property,parts=[],ax=None,show=True)
+
+    Plot the conservatino of a particles "property" (i.e. property="E")
+    """
+    if ax == None:
+        ax = plt.gca()
+    
+    if parts == []:
+        parts = [key for key in self.sp.keys()]
+
+    missing = []
+    for i in parts:
+        if not self.sp[i].missing:
+            prop = getattr(self.sp[i],property)
+            ax.plot(self.sp[i].t,prop/prop[0] - 1)
+        else:
+            missing += [i]
+    
+    ax.set_xlabel('t')
+    ax.set_ylabel(r"$\Delta "+property+"/"+property+"_0$")
+    
+    if show:
+        ax.show()
+    
+    return ax, missing
+
+def __plot_particle_property(self,xprop,yprop,parts=[],ax=None,show=True):
+    """
+    __plot_particle_property(self,xprop,yprop,parts=[],ax=None,show=True)
+
+    Hidden function for generating plots of of given properties
+    """
+    if ax == None:
+        ax = plt.gca()
+    
+    if parts == []:
+        parts = [key for key in self.sp.keys()]
+    
+    missing = []
+    for i in parts:
+        if not self.sp[i].missing:
+            x = getattr(self.sp[i],xprop)
+            y = getattr(self.sp[i],yprop)
+            ax.plot(x,y)
+        else:
+            missing += [i]
+    
+    ax.set_xlabel("${0}$".format(xprop))
+    ax.set_ylabel("${0}$".format(yprop))
+    
+    return ax, missing
+
+
+def plot_initial_dist():
+    pass
