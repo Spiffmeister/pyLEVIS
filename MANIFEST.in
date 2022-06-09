@@ -1,3 +1,4 @@
 include README.md
 include settings.ini
 include LICENSE.txt
+include docs/*
