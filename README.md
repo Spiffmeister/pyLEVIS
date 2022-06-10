@@ -1,22 +1,31 @@
 # pyLEVIS
 
+<<<<<<< HEAD
 !!! THIS README AND PACKAGE IS STILL INCOMPLETE !!!
 
 Python implementation of the VENUS-LEVIS MATLAB routines. Most of the routines have the same names so the functions should be familiar.
 
 You should be in the direction in which your runs are located to read them in, for instance `path/to/levis/runs`.
+=======
+Python implementation of the VENUS-LEVIS matlab routines.
+>>>>>>> setup
 
 
+# Installation
 
+<<<<<<< HEAD
 # Examples
 
 ## Example: Reading in a simulation and plotting
 
+=======
+Can be download from PyPI by
+>>>>>>> setup
 ```py
-    # Import the package from the python command line as
-    import pylevis
+    pip3 install pylevis
 ```
 
+<<<<<<< HEAD
 Reading the simulation is similar to the old scripts, except we no longer use `Mercury` to read data in, also that reading in the simulation will still work if we append "prob" to the name, or we can choose to omit it:
 ```py
     # Read in some simulation
@@ -75,9 +84,25 @@ How the simulation is called depends on the value of `f.machine=""` (default is 
 
 #### Current machine configs
 - local (calls `./mercury.x < data`)
+=======
+# Usage
+
+You can load the package the usual way (for python packages) by running
+```py
+    import pylevis
+```
+Examples for running the code can be found in ./docs on the github page (see link below).
 
 
+# Developer(s)
 
+- Dean Muir
+>>>>>>> setup
+
+
+# Github
+
+<<<<<<< HEAD
 
 ---
 # Progress
@@ -115,3 +140,6 @@ How the simulation is called depends on the value of `f.machine=""` (default is 
 
 
 
+=======
+The source code can be found at https://github.com/Spiffmeister/pyLEVIS
+>>>>>>> setup
