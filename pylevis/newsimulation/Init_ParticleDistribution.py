@@ -8,12 +8,19 @@ import os
 
 
 
-def create_particle_distribution(npart,s,pol,tor,vpar,E,mass_ratio=1,charge_ratio=1,weight=1,vol=[0]):
+def create_particle_distribution(npart,s,pol,tor,vpar,E,mass_ratio=1,charge_ratio=1,weight=1,eqtype='spec'):
     '''
     Create a distribution of n particles
     R, E, vpar and vol are lists of [Rmin,Rmax] for example
     Optional arguments: M, C, weight, volmax
     '''
+    if eqtype != 'spec':
+        parts = numpy.zeros([npart,8])
+        if any(s-2.0 > 0.0):
+            raise ValueError('s must be between 0 and 2')
+    else:
+        parts = numpy.zeros([npart,9])
+
     def gen(param):
         if type(param) in [int,float]:
             return param
@@ -22,17 +29,15 @@ def create_particle_distribution(npart,s,pol,tor,vpar,E,mass_ratio=1,charge_rati
     
     npartchk(npart)
 
-    if (vol[0] == 0) and (len(vol) == 1):
-        parts = numpy.zeros([npart, 8])
-    else:
-        parts = numpy.zeros([npart, 9])
-    
     # mass ratio to proton
     parts[:,0] = gen(mass_ratio)
     # charge ratio to proton
     parts[:,1] = gen(charge_ratio)
     # Radial position
     parts[:,2] = gen(s) # s assignment
+    if eqtype=='spec':
+        parts[:,8] = numpy.floor(parts[:,2]/2.0)+1
+        parts[:,2] = numpy.mod(parts[:,2],2.0)
     # Poloidal angle
     parts[:,3] = gen(pol)
     # Toroidal angle
@@ -43,11 +48,6 @@ def create_particle_distribution(npart,s,pol,tor,vpar,E,mass_ratio=1,charge_rati
     parts[:,6] = gen(E)
     # Statistical weight
     parts[:,7] = gen(weight)
-    # Volumes if 
-    if len(vol) > 1:
-        parts[:,8] = numpy.random.randint(low=vol[0],high=vol[-1],size=npart)
-    elif (len(vol) == 1) and (vol[0] != 0):
-        parts[:,8] = vol[0]
     
     return parts
 

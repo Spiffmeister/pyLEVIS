@@ -66,19 +66,23 @@ class new_simulation:
 
 
     ### BINDING TO EXTERNAL FUNCTIONS ###
-    def generate_particles(self,R,pol,tor,vpar,E,M=1,C=1,weight=1,vols=[0]):
+    def generate_particles(self,R,pol,tor,vpar,E,M=1,C=1,weight=1):
         '''
         generate_particles(self,R,pol,tor,vpar,E,M=1,C=1,weight=1,vols=[0])
 
         radial position, poloidal angle, toroidal angle, v_parallel/v, energy [eV], mass ratio to proton, charge ratio to proton, statistical weight, number of volumes in equilibrium (spec only)
         '''
-        if (self.equilibrium_type == "spec") & (vols[0] == 0):
-            vols[0] = 1
-        self.particles = create_particle_distribution(self.nparts,R,pol,tor,vpar,E,mass_ratio=M,charge_ratio=C,weight=weight,vol=vols)
+        self.particles = create_particle_distribution(self.nparts,R,pol,tor,vpar,E,mass_ratio=M,charge_ratio=C,weight=weight,eqtype=self.equilibrium_type)
         avs = numpy.mean(self.particles[:,2])
         avp = numpy.mean(self.particles[:,3])
         avt = numpy.mean(self.particles[:,4])
-        print("Particle distribution generated. Average [s,theta,zeta] position: [%3.5f,%3.5f,%3.5f]"%(avs,avp,avt))
+
+        if self.equilibrium_type != 'spec':
+            print("Particle distribution generated. Average [s,theta,zeta] position: [%3.5f,%3.5f,%3.5f]"%(avs,avp,avt))
+        else:
+            pmin = numpy.min(self.particles[:,8])
+            pmax = numpy.max(self.particles[:,8])
+            print("Particle distribution generated. Average [s,theta,zeta] position: [%3.5f,%3.5f,%3.5f] in volumes %i-%i"%(avs,avp,avt,pmin,pmax))
     
 
     # machine_npartchk = npartchk
