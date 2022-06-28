@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='pylevis',
-    version='0.215',
+    version='0.216',
     description='Python utilities/interface for VENUS-LEVIS fast particle orbit code',
     long_description=long_description,
     long_description_content_type="text/markdown",
