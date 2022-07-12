@@ -1,12 +1,12 @@
 ## BINDING EXTERNAL ROUTINES TO LEVIS CLASS
-from .directories import Set_Directories
+from ._directories import Set_Directories
 
 '''
 BINDINGS FROM io
 '''
 from .io.Get_InitialParams import Get_SimulationParameters
-from .particles.ParticleClass import BIND_Get_Particle
-from .particles.Get_InitialParticleData import initial_particle_dist
+from .io.Get_Particle import _BIND_Get_Particle
+from .io.RW_InitialParticleData import Get_initial_particle_dist
 from .io.Get_PlasmaVolume import BIND_Get_Volume
 from .io.Get_Collisions import Get_Particle_Collisions
 from .io.Get_Moments import moment
@@ -48,14 +48,14 @@ class simulation:
     plot_spconservation() - plots the conservation of energy and momentum and a 2D projection of orbits
 
     """
-    def __init__(self,runid,light_version=False,simcomplete=True,scenic=False,large=False):
+    def __init__(self,runid,light_version=False,simcomplete=True,scenic=False,lite=False):
         # Simulation properties
         self.simcomplete = simcomplete
         self.light_version = light_version
         self.scenic = scenic        #SHOULD BE REMOVED AND ONLY BE PRESENT AS DICT???
         self.runid = runid
         self.equilibrium_type = "spec" #TODO rewrite for auto-detection
-        self.large = large #TODO If the simulation is 'large'
+        self.lite = lite #TODO If the simulation is 'large'
 
         ''' Functions '''
         # Set directories
@@ -63,7 +63,7 @@ class simulation:
 
         # io in initialised parameters
         self.params = Get_SimulationParameters(self) #GetPar
-        self.init = initial_particle_dist(self)
+        self.init = Get_initial_particle_dist(self)
 
         # Get plasma properties
         # self.magnetic = BackupEquilibrium(self) #DecryptEquilibrium in matlab
@@ -79,11 +79,11 @@ class simulation:
         # if simcomplete:
         #     self.GetMoments
         print("Simualtion read, to read in particle data use the .GetParticle() function.\n")
-        print("If the simulation data is large, recommend setting simulation.large=True")
+        print("If the simulation data is large, set simulation.lite=True")
     
 
     ''' --- EXTERNAL BINDINGS --- '''
-    GetParticle = BIND_Get_Particle
+    GetParticle = _BIND_Get_Particle
     SetDir = Set_Directories
 
     GetVolume = BIND_Get_Volume #Get_PlasmaVolume
@@ -101,7 +101,6 @@ class simulation:
     Visualisation
     '''
     plot_spconservation = plots_single_particle.plot_spconservation
-
 
 
 

@@ -1,15 +1,13 @@
 # Used for initialising simulations
 
-from matplotlib.style import available
 import numpy
 import os
 import shutil
 import warnings
-import pylevis
 import subprocess
-from ..directories import Set_Directories
 from .class_data import data
-from .Init_ParticleDistribution import create_particle_distribution, write_distribution, npartchk
+from .Init_ParticleDistribution import create_particle_distribution
+from ..io.RW_InitialParticleData import write_distribution
 
 
 class new_simulation:
@@ -73,19 +71,18 @@ class new_simulation:
         radial position, poloidal angle, toroidal angle, v_parallel/v, energy [eV], mass ratio to proton, charge ratio to proton, statistical weight, number of volumes in equilibrium (spec only)
         '''
         self.particles = create_particle_distribution(self.nparts,R,pol,tor,vpar,E,mass_ratio=M,charge_ratio=C,weight=weight,eqtype=self.equilibrium_type)
-        avs = numpy.mean(self.particles[:,2])
-        avp = numpy.mean(self.particles[:,3])
-        avt = numpy.mean(self.particles[:,4])
+        avs     = numpy.mean(self.particles.s)
+        avpol   = numpy.mean(self.particles.ph)
+        avth    = numpy.mean(self.particles.th)
 
         if self.equilibrium_type != 'spec':
-            print("Particle distribution generated. Average [s,theta,zeta] position: [%3.5f,%3.5f,%3.5f]"%(avs,avp,avt))
+            print("Particle distribution generated. Average [s,theta,zeta] position: [%3.5f,%3.5f,%3.5f]"%(avs,avpol,avth))
         else:
-            pmin = numpy.min(self.particles[:,8])
-            pmax = numpy.max(self.particles[:,8])
-            print("Particle distribution generated. Average [s,theta,zeta] position: [%3.5f,%3.5f,%3.5f] in volumes %i-%i"%(avs,avp,avt,pmin,pmax))
+            pmin = numpy.min(self.particles.lvol)
+            pmax = numpy.max(self.particles.lvol)
+            print("Particle distribution generated. Average [s,theta,zeta] position: [%3.5f,%3.5f,%3.5f] in volumes %i-%i"%(avs,avpol,avth,pmin,pmax))
     
 
-    # machine_npartchk = npartchk
     # write_particles = write_distribution
 
     def machineconfiguration(self):

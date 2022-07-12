@@ -4,9 +4,9 @@ PARTICLE CLASS
 import os
 import numpy
 
-from .ext_fns import ext_rhotor, ext_v, ext_vpar, ext_vperp
+from .ext_fns import _ext_rhotor, _ext_v, _ext_vpar, _ext_vperp
 
-class single_particle():
+class single_particle:
     """
     single_particle(simulation,index=-1)
 
@@ -20,13 +20,15 @@ class single_particle():
     ----------
     - index = -1 (default)
         Which particle to read in
+    - lite = False (default)
+        If false, values such as x,y,z will be computed and stored. If true, these will remain as functions i.e. self.x()
 
     Returns
     ----------
     particle class:
         Either a complete particle object or an empty particle
     """
-    def __init__(self,simulation,index=-1):
+    def __init__(self,simulation,index=-1,lite=False):
         n_ele = 24
         if simulation.equilibrium_type == "spec":
             n_ele += 1
@@ -40,24 +42,40 @@ class single_particle():
             fulldata = numpy.loadtxt(particle_file)
             if numpy.size(fulldata)!=0:
                 # If data exists read in
-                self.__read_single_particle(fulldata,n_ele)
+                self._read_single_particle(fulldata,n_ele)
                 self.missing = False
-                self.mass = simulation.init.mass[index]
-                self.charge = simulation.init.charge[index]
+                if simulation.params["nparts"] > 1:
+                    self.mass = simulation.init.mass[index]
+                    self.charge = simulation.init.charge[index]
+                else:
+                    self.mass = simulation.init.mass
+                    self.charge = simulation.init.charge
             else:
                 # Otherwise create empty particle
-                self.__empty_particle()
+                self._empty_particle()
         else:
             raise("Read failed: Particle "+str(index)+" does not exist.")
-
+        
+        if not lite:
+            # If read-in is not in low memory mode construct and store the data
+            self.nt = self.nt()
+            self.passing = self.passing()
+            self.larmor = self.larmor()
+            self.x = self.x()
+            self.y = self.y()
+            self.z = self.z()
+            self.gc_x =self.gc_x()
+            self.gc_y =self.gc_y()
+            self.gc_z =self.gc_z()
+            
 
     '''
-        Calculate these values when required rather than storing them
+        Inbuilt functions. Overwritten by stored values if lite=False
     '''
-    rhotor = ext_rhotor
-    v = ext_v
-    vpar = ext_vpar
-    vperp = ext_vperp
+    rhotor = _ext_rhotor
+    v = _ext_v
+    vpar = _ext_vpar
+    vperp = _ext_vperp
     # def v(self): #Velocity
     #     return numpy.sqrt(2*self.E*self.charge/self.mass)
     # def vpar(self): #v parallel to B
@@ -69,10 +87,10 @@ class single_particle():
         return len(self.t)
     
     def passing(self): #If particle is passing/counterpassing
-        return numpy.sign(max(self.lam)*min(self.lam))
+        return int(max(0,numpy.sign(max(self.lam)*min(self.lam))))
     
     def larmor(self): #Larmor radius
-        return self.mass*self.vperp/(self.modB*self.charge)
+        return self.mass*self.vperp()/(self.modB*self.charge)
     
     ## CARTESIAN COORDINATES
     def x(self):
@@ -89,11 +107,17 @@ class single_particle():
     def gc_z(self):
         return self.gc_Z
     
+    def crossing(self):
+        try:
+            return any(self.lvol != self.lvol[1])
+        except:
+            return False
+    
 
-    def __read_single_particle(self,fulldata,n_ele=25):
+    def _read_single_particle(self,fulldata,n_ele=25):
         # The file format expected
         """
-        __read_single_particle(self,fulldata,n_ele=25)
+        _read_single_particle(self,fulldata,n_ele=25)
 
         Returns
         ----------
@@ -126,9 +150,9 @@ class single_particle():
         if n_ele == 25:
             self.lvol           = fulldata[24:-1:n_ele].astype(int)
     
-    def __empty_particle(self,equilibrium_type="spec"):
+    def _empty_particle(self,equilibrium_type="spec"):
         """
-        __empty_particle(self,equilibrium_type="spec")
+        _empty_particle(self,equilibrium_type="spec")
 
         Returns
         ----------
@@ -156,48 +180,6 @@ class single_particle():
 
 
 
-'''
-    BINDING TO simulation CLASS
-'''
-
-def BIND_Get_Particle(self,parts=[]):
-    """
-    BIND_Get_Particle(simulation,parts=[])
-
-    Method bound to simulation class for reading in particles.
-
-    Inputs
-    ----------
-    - simulation
-        Called from self.GetParticle(), self in simulation class
-    Optional Inputs
-    ----------
-    - parts=[]
-        If parts is empty, read all particles
-        Otherwise read in the particles listed in parts (indexing from 1) [convention from LEVIS]
-    
-    Returns
-    ----------
-    Particle class
-    """
-    if self.params["dump_particles"]==0:
-        # If there is no particle data abort
-        raise("single particle dumping is off, aborting read.")
-    
-    if (parts == []):
-        # If index is -1 and no list of parts is specified read all
-        np = len(os.listdir(os.path.join(self.dirdiag,"particle_data")))
-        self.sp = dict.fromkeys(range(np))
-        for i in self.sp:
-            self.sp[i] = single_particle(self,i)
-    elif parts != []:
-        # Read only the list of particles provided
-        parts = [x-1 for x in parts]
-        self.sp = dict.fromkeys(parts)
-        for i in parts:
-            self.sp[i] = single_particle(self,i)
-
-        
 
 
 
