@@ -3,7 +3,7 @@
 import os
 import h5py
 import numpy
-from ..particles.ext_fns import ext_rhotor
+from ..particles.ext_fns import _ext_rhotor
 from ..constants import charge
 
 
@@ -20,7 +20,7 @@ class moment:
     ----------
     Moment class with
     """
-    def __init__(self,fpath,vol,par=-1):
+    def __init__(self,fpath,vol):
 
         fname = os.path.join(fpath,'Moments.h5')
 
@@ -46,14 +46,14 @@ class moment:
             
             self.nrad = float(f_open.readline())
 
-            for j in range(par.ndiagnostic):
+            for j in range(self.params.ndiagnostic):
                 self.curr_onion[:,j] = float(f_open.readline(self.nrad))
                 self.hist_onion[:,j] = float(f_open.readline(self.nrad))
                 self.erg_onion[:,j]  = float(f_open.readline(self.nrad))
             
             f_open.close()
 
-            time = numpy.linspace(0,par.tfin,par.ndiagnostic+1)
+            time = numpy.linspace(0,self.params.tfin,self.params.ndiagnostic+1)
             self.t = time[1:]
 
 
@@ -62,11 +62,11 @@ class moment:
                 self.trapped = trapped()
                 f_open = open(fname)
                 self.trapped.nrad = float(f_open.readline())
-                for i in range(1,par.ndiagnostic):
+                for i in range(1,self.params.ndiagnostic):
                     self.trapped.curr_onion[:,i]    = float(f_open.readline(self.nrad))
                     self.trapped.hist_onion[:,i]    = float(f_open.readline(self.nrad))
                     self.trapped.erg_onion[:,i]     = float(f_open.readline(self.nrad))
-                
+           
 
         s = numpy.linspace(0,1,self.nrad+1)
         self.s = s[:-1] + numpy.diff(s)/2
@@ -90,7 +90,7 @@ class moment:
         self.Iavg = numpy.mean(self.icurr[:,numpy.floor(len(self.icurr)/2):],2)
         self.Eavg = numpy.mean(self.ierg[:,numpy.floor(len(self.ierg)/2):],2)
 
-        rhotor = ext_rhotor
+        rhotor = _ext_rhotor
 
 
 
